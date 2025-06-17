@@ -1,5 +1,3 @@
 package DAO;
 
-public class categoriaDAO {
-
-}
+public class categoriaDAO {}

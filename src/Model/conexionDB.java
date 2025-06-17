@@ -1,4 +1,4 @@
-package modelo;
+package Model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -54,20 +54,5 @@ public class conexionDB {
         }
 
         return conexion;
-    }
-
-    /**
-     * Método principal de prueba para verificar que la conexión a la base de datos sea exitosa.
-     * 
-     * @param args Argumentos de línea de comandos (no se utilizan).
-     */
-    public static void main(String[] args) {
-        Connection con = obtenerConexion();
-
-        if (con != null) {
-            System.out.println("🔍 Verificación completa: conexión establecida.");
-        } else {
-            System.out.println("💥 Verificación fallida: no se pudo conectar.");
-        }
     }
 }
