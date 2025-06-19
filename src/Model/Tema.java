@@ -1,14 +1,14 @@
-	package Model;
+package Model;
 
-public class Categoria {
+public class Tema {
 	private int id;
 	private String nombre;
 	
-	public Categoria(){
+	public Tema(){
 		
 	}
 	
-	public Categoria(int id, String nombre) {
+	public Tema(int id, String nombre) {
 		this.id = id;
 		this.nombre = nombre; 
 	}

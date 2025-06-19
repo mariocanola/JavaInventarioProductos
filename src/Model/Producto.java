@@ -25,7 +25,7 @@ public class Producto {
     private double precio;
 
     /** Categoría a la que pertenece el producto */
-    private Categoria categoria;
+    private Tema categoria;
     
     /**
      * Constructor vacío requerido para frameworks o instanciación manual.
@@ -42,7 +42,7 @@ public class Producto {
      * @param precio Precio del producto
      * @param categoria Categoría asociada al producto
      */
-    public Producto(int id, String nombre, int cantidad, double precio, Categoria categoria) {
+    public Producto(int id, String nombre, int cantidad, double precio, Tema categoria) {
         this.id = id;
         this.nombre = nombre;
         this.cantidad = cantidad;
@@ -118,7 +118,7 @@ public class Producto {
      * Retorna la categoría del producto.
      * @return categoría asociada
      */
-    public Categoria darCategoria() {
+    public Tema darCategoria() {
         return categoria;
     }
 
@@ -126,7 +126,7 @@ public class Producto {
      * Establece la categoría del producto.
      * @param categoria Nueva categoría asociada
      */
-    public void setCategoria(Categoria categoria) {
+    public void setCategoria(Tema categoria) {
         this.categoria = categoria;
     }
 }
