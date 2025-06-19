@@ -24,14 +24,11 @@ public class Producto {
     /** Precio del producto */
     private double precio;
 
-    /** Categoría a la que pertenece el producto */
-    private Tema categoria;
-    
-    /**
-     * Constructor vacío requerido para frameworks o instanciación manual.
-     */
-    public Producto() {
-    }
+    /** Estado del producto (activo, inactivo, etc.) */
+    private String status;
+
+    /** Identificador de la relación con tema_parametro */
+    private int idTemaParametro;
 
     /**
      * Crea un producto con todos sus atributos inicializados.
@@ -42,12 +39,13 @@ public class Producto {
      * @param precio Precio del producto
      * @param categoria Categoría asociada al producto
      */
-    public Producto(int id, String nombre, int cantidad, double precio, Tema categoria) {
+    public Producto(int id, String nombre, int cantidad, double precio, String status, int idTemaParametro) {
         this.id = id;
         this.nombre = nombre;
         this.cantidad = cantidad;
         this.precio = precio;
-        this.categoria = categoria; 
+        this.status = status;
+        this.idTemaParametro = idTemaParametro;
     }
 
     /**
@@ -115,18 +113,34 @@ public class Producto {
     }
 
     /**
-     * Retorna la categoría del producto.
-     * @return categoría asociada
+     * Retorna el estado del producto.
+     * @return estado del producto
      */
-    public Tema darCategoria() {
-        return categoria;
+    public String darStatus() {
+        return status;
     }
 
     /**
-     * Establece la categoría del producto.
-     * @param categoria Nueva categoría asociada
+     * Establece el estado del producto.
+     * @param status Nuevo estado
      */
-    public void setCategoria(Tema categoria) {
-        this.categoria = categoria;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * Retorna el identificador de la relación con tema_parametro.
+     * @return id del tema_parametro
+     */
+    public int darIdTemaParametro() {
+        return idTemaParametro;
+    }
+
+    /**
+     * Establece el identificador de la relación con tema_parametro.
+     * @param idTemaParametro Nuevo id del tema_parametro
+     */
+    public void setIdTemaParametro(int idTemaParametro) {
+        this.idTemaParametro = idTemaParametro;
     }
 }
