@@ -37,7 +37,8 @@ public class Producto {
      * @param nombre Nombre del producto
      * @param cantidad Cantidad disponible en inventario
      * @param precio Precio del producto
-     * @param categoria Categoría asociada al producto
+     * @param status si esta disponible el producto o no
+     * @param idTemaParametro
      */
     public Producto(int id, String nombre, int cantidad, double precio, String status, int idTemaParametro) {
         this.id = id;
@@ -46,6 +47,14 @@ public class Producto {
         this.precio = precio;
         this.status = status;
         this.idTemaParametro = idTemaParametro;
+    }
+
+    public Producto(String nombre, int cantidad, double precio, String status, int idTemaParametro) {
+    	this.nombre = nombre;
+    	this.cantidad = cantidad;
+    	this.precio = precio;
+    	this.status = status;
+    	this.idTemaParametro = idTemaParametro;
     }
 
     /**
@@ -98,7 +107,7 @@ public class Producto {
 
     /**
      * Retorna el precio del producto.
-     * @return precio
+     * @return precio  	
      */
     public double darPrecio() {
         return precio;
