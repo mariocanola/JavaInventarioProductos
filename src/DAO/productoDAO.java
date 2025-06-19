@@ -3,6 +3,11 @@ package DAO;
 import Model.Producto;
 import java.sql.*;
 
+/**
+ * Agrega un producto a la base de datos.
+ * @param producto El producto a agregar.
+ * @return true si se agregó correctamente, false si hubo error.
+ */
 public class productoDAO {
 
     // Método para obtener la conexión a la base de datos
@@ -12,10 +17,8 @@ public class productoDAO {
 
     // Método para agregar un producto
     public boolean agregarProducto(Producto producto) {
-        // SQL para insertar un nuevo producto
-        String query = "INSERT INTO producto (nombre, precio, cantidad, status, id_tema_parametro) VALUES (?, ?, ?, ?, ?)";
-        
-        // Conexión y PreparedStatement
+        String query = "INSERT INTO productos (nombre, precio, cantidad, status, id_marca, id_categoria, id_sexo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+       
         try (Connection conn = getConnection(); 
              PreparedStatement stmt = conn.prepareStatement(query)) {
             
@@ -24,7 +27,9 @@ public class productoDAO {
             stmt.setDouble(2, producto.darPrecio());
             stmt.setInt(3, producto.darCantidad());
             stmt.setString(4, producto.darStatus());
-            stmt.setInt(5, producto.darIdTemaParametro());  // Esto asume que 'id_tema_parametro' es un campo de la tabla
+            stmt.setInt(5, producto.darIdMarca());
+            stmt.setInt(6, producto.darIdCategoria());
+            stmt.setInt(7, producto.darIdSexo());
             
             // Ejecutar la inserción
             int rowsInserted = stmt.executeUpdate();

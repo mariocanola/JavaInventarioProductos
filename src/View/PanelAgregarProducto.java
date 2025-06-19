@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import Model.Parametro;
 import java.util.List;
+import java.awt.event.ActionListener;
 
 public class PanelAgregarProducto extends JPanel {
 
@@ -100,5 +101,23 @@ public class PanelAgregarProducto extends JPanel {
 
     public Parametro getCategoriaSeleccionada() {
         return (Parametro) comboCategoria.getSelectedItem();
+    }
+
+    /**
+     * Permite al controlador registrar un ActionListener en el botón Guardar.
+     * @param listener ActionListener a registrar
+     */
+    public void addGuardarListener(ActionListener listener) {
+        btnGuardar.addActionListener(listener);
+    }
+    
+    /** Limpia los campos del formulario. */
+    public void limpiarCampos() {
+        txtNombre.setText("");
+        txtPrecio.setText("");
+        txtCantidad.setText("");
+        comboMarca.setSelectedIndex(-1);
+        comboSexo.setSelectedIndex(-1);
+        comboCategoria.setSelectedIndex(-1);
     }
 }

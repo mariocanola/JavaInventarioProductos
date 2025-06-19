@@ -16,7 +16,7 @@ public class ParametroDAO {
         List<Parametro> parametros = new ArrayList<>();
         String query = "SELECT p.id, p.nombre " +
                 "FROM `parametro` p " +    // Asegurándonos de que las tablas estén entre comillas
-                "JOIN `temaparametro` tp ON p.id = tp.id_parametro " +
+                "JOIN `tema_parametro` tp ON p.id = tp.id_parametro " +
                 "JOIN `tema` t ON t.id = tp.id_tema " +
                 "WHERE t.nombre = ?";
 
