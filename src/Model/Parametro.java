@@ -59,4 +59,12 @@ public class Parametro {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+    
+    /**
+     * Devuelve el nombre para mostrarlo automáticamente en los JComboBox.
+     */
+    @Override
+    public String toString() {
+        return nombre;
+    }
 }

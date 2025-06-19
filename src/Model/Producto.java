@@ -28,7 +28,13 @@ public class Producto {
     private String status;
 
     /** Identificador de la relación con tema_parametro */
-    private int idTemaParametro;
+    private int idMarca;
+    
+    private int idCategoria;
+    
+    private int idSexo;
+    
+    
 
     /**
      * Crea un producto con todos sus atributos inicializados.
@@ -37,15 +43,18 @@ public class Producto {
      * @param nombre Nombre del producto
      * @param cantidad Cantidad disponible en inventario
      * @param precio Precio del producto
-     * @param categoria Categoría asociada al producto
+     * @param status si esta disponible el producto o no
+     * @param idTemaParametro
      */
-    public Producto(int id, String nombre, int cantidad, double precio, String status, int idTemaParametro) {
+    public Producto(int id, String nombre, int cantidad, double precio, String status, int idMarca , int idCategoria, int idSexo) {
         this.id = id;
         this.nombre = nombre;
         this.cantidad = cantidad;
         this.precio = precio;
         this.status = status;
-        this.idTemaParametro = idTemaParametro;
+        this.idMarca = idMarca;
+        this.idCategoria = idCategoria;
+        this.idSexo = idSexo;
     }
 
     /**
@@ -98,7 +107,7 @@ public class Producto {
 
     /**
      * Retorna el precio del producto.
-     * @return precio
+     * @return precio  	
      */
     public double darPrecio() {
         return precio;
@@ -128,19 +137,27 @@ public class Producto {
         this.status = status;
     }
 
-    /**
-     * Retorna el identificador de la relación con tema_parametro.
-     * @return id del tema_parametro
-     */
-    public int darIdTemaParametro() {
-        return idTemaParametro;
+    public int darIdMarca() {
+        return idMarca;
     }
 
-    /**
-     * Establece el identificador de la relación con tema_parametro.
-     * @param idTemaParametro Nuevo id del tema_parametro
-     */
-    public void setIdTemaParametro(int idTemaParametro) {
-        this.idTemaParametro = idTemaParametro;
+    public void setIdMarca(int idMarca) {
+        this.idMarca = idMarca;
+    }
+    
+    public int darIdCategoria() {
+    	return idCategoria;
+    }
+    
+    public void setIdCategoria(int idCategoria) {
+    	this.idCategoria = idCategoria;
+    }
+    
+    public int darIdSexo() {
+    	return idSexo;
+    }
+    
+    public void setIdSexo(int idSexo) {
+    	this.idSexo = idSexo;
     }
 }
