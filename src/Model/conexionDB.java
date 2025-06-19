@@ -12,7 +12,6 @@ import java.sql.SQLException;
  * 
  * <p>Requiere que el driver JDBC de MySQL esté incluido en el classpath.</p>
  * 
- * @author [Tu Nombre]
  */
 public class conexionDB {
 
@@ -42,17 +41,28 @@ public class conexionDB {
         Connection conexion = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
             conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
             System.out.println("Conexión exitosa a la base de datos.");
-        } catch (ClassNotFoundException e) {
-            System.out.println("No se encontró el driver JDBC.");
-            e.printStackTrace();
         } catch (SQLException e) {
             System.out.println("Error al conectar con la base de datos.");
             e.printStackTrace();
         }
-
         return conexion;
     }
+    
+    /**
+     * Cierra la conexión con la base de datos.
+     * @param conexion La conexión que se desea cerrar.
+     */
+    public static void cerrarConexion(Connection conexion) {
+        if (conexion != null) {
+            try {
+                conexion.close();
+                System.out.println("Conexión cerrada correctamente.");
+            } catch (SQLException e) {
+                System.out.println("Error al cerrar la conexión.");
+                e.printStackTrace();
+            }
+        }
+    }	
 }
