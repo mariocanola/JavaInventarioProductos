@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -161,11 +160,19 @@ public class InterfazProductos extends JFrame {
         // Botón para limpiar filtros
         JButton btnLimpiarFiltros = new JButton("Limpiar Filtros");
         btnLimpiarFiltros.addActionListener(e -> {
+            // Limpiar las listas de selección
             marcasSeleccionadas.clear();
             sexosSeleccionados.clear();
             categoriasSeleccionadas.clear();
+            
+            // Recargar los productos sin filtros
             if (controller != null) {
                 controller.cargarProductos();
+            }
+            
+            // Volver a cargar los parámetros para actualizar los menús
+            if (controller != null) {
+                controller.cargarParametros();
             }
         });
         panelTop.add(btnLimpiarFiltros);
@@ -300,17 +307,17 @@ public class InterfazProductos extends JFrame {
             }
             
             // Filtrar por marcas si hay seleccionadas
-            if (cumpleFiltros && !marcasSeleccionadas.isEmpty()) {
+            if (!marcasSeleccionadas.isEmpty()) {
                 cumpleFiltros = marcasSeleccionadas.contains(nombreMarca);
             }
             
             // Filtrar por sexos si hay seleccionados
-            if (cumpleFiltros && !sexosSeleccionados.isEmpty()) {
+            if (!sexosSeleccionados.isEmpty()) {
                 cumpleFiltros = sexosSeleccionados.contains(nombreSexo);
             }
             
             // Filtrar por categorías si hay seleccionadas
-            if (cumpleFiltros && !categoriasSeleccionadas.isEmpty()) {
+            if (!categoriasSeleccionadas.isEmpty()) {
                 cumpleFiltros = categoriasSeleccionadas.contains(nombreCategoria);
             }
             
