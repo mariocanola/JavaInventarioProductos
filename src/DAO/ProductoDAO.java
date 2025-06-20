@@ -94,4 +94,38 @@ public class ProductoDAO {
         }
         return parametros;
     }
+
+    /**
+     * Obtiene una lista con todos los productos de la base de datos.
+     *
+     * @return lista de productos; si no hay, devuelve una lista vacía.
+     */
+    public List<Producto> obtenerTodos() {
+        List<Producto> productos = new ArrayList<>();
+        String query = "SELECT * FROM productos";
+
+        try (Connection conn = ConexionDB.obtenerConexion();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            
+            while (rs.next()) {
+                Producto producto = new Producto(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getInt("cantidad"),
+                    rs.getDouble("precio"),
+                    rs.getString("status"),
+                    rs.getInt("id_marca"),
+                    rs.getInt("id_categoria"),
+                    rs.getInt("id_sexo"),
+                    rs.getString("ruta_img")
+                );
+                productos.add(producto);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productos;
+    }
 }

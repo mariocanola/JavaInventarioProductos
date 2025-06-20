@@ -42,7 +42,9 @@ public class ControllerProducto {
             this.productoDAO = new ProductoDAO();
             // 2. Cargar parámetros (ahora el DAO ya no es null)
             cargarParametros();
-            // 3. Registrar acción del botón guardar
+            // 3. Cargar productos
+            cargarProductos();
+            // 4. Registrar acción del botón guardar
             this.panelAgregarProducto.addGuardarListener(e -> agregarProducto());
 	    }
 
@@ -64,6 +66,14 @@ public class ControllerProducto {
             panelPrincipalInterfazProductos.cargarParametros(marcas, sexos, categorias);
 	    }
 	    
+	    /**
+     * Consulta los productos en BD y se los pasa a la vista para que los muestre.
+     */
+    public void cargarProductos() {
+        List<Producto> productos = productoDAO.obtenerTodos();
+        panelPrincipalInterfazProductos.mostrarProductos(productos);
+    }
+
 	    /**
      * Recupera los datos del formulario, los valida, gestiona la copia de la
      * imagen y, si todo es correcto, persiste el nuevo producto.

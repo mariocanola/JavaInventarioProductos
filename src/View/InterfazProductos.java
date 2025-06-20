@@ -8,6 +8,7 @@ import java.util.List;
 import java.awt.BorderLayout;   
 import javax.swing.JFrame;
 
+import Model.Producto;
 import Model.Parametro;
 import controller.ControllerProducto;
 
@@ -58,14 +59,6 @@ public class InterfazProductos extends JFrame {
         panelGrid = new JPanel(new GridLayout(0, 4, 15, 15));  // 4 columnas, filas automáticas
         panelGrid.setBackground(Color.BLACK);
 
-        for (int i = 0; i < 50; i++) {
-            panelGrid.add(new PanelCardProducto(
-                    new ImageIcon("ruta/a/placeholder.png"),
-                    "Producto " + i, 
-                    "$" + (10*i), 
-                    "Disponible").getPanel());
-        }
-
         JScrollPane scroll = new JScrollPane(panelGrid,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -75,6 +68,33 @@ public class InterfazProductos extends JFrame {
 
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    public void mostrarProductos(List<Producto> productos) {
+        panelGrid.removeAll();
+
+        for (Producto producto : productos) {
+            ImageIcon icon = null;
+            String imagePath = producto.darImagenPath();
+            if (imagePath != null && !imagePath.isEmpty()) {
+                // Se asume que la ruta es relativa al proyecto
+                icon = new ImageIcon(imagePath);
+            } else {
+                // Placeholder si no hay imagen
+                icon = new ImageIcon("ruta/a/placeholder.png");
+            }
+            
+            PanelCardProducto card = new PanelCardProducto(
+                icon,
+                producto.darNombreProducto(),
+                "$" + String.format("%.2f", producto.darPrecio()),
+                producto.darStatus()
+            );
+            panelGrid.add(card.getPanel());
+        }
+
+        panelGrid.revalidate();
+        panelGrid.repaint();
     }
 
     public void cargarParametros(List<Parametro> marcas, List<Parametro> sexos, List<Parametro> categorias) {
