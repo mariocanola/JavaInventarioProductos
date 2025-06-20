@@ -12,6 +12,7 @@ import Model.ConexionDB;
  * @param producto El producto a agregar.
  * @return true si se agregó correctamente, false si hubo error.
  */
+
 /**
  * DAO encargado de la persistencia de entidades {@link Model.Producto}.
  * <p>
@@ -27,7 +28,7 @@ import Model.ConexionDB;
  * @author Mario
  * @since 1.0
  */
-public class productoDAO {
+public class ProductoDAO {
 
     // Método para agregar un producto
     /**
@@ -37,7 +38,7 @@ public class productoDAO {
      * @return {@code true} si la operación afectó al menos una fila; {@code false} en caso contrario.
      */
     public boolean agregarProducto(Producto producto) {
-        String query = "INSERT INTO productos (nombre, precio, cantidad, status, id_marca, id_categoria, id_sexo, ruta_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";  
+        String query = "INSERT INTO productos (nombre, precio, cantidad, status, id_marca, id_categoria, id_sexo, ruta_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.obtenerConexion(); 
             PreparedStatement stmt = conn.prepareStatement(query)) {
             
@@ -92,5 +93,65 @@ public class productoDAO {
             e.printStackTrace();
         }
         return parametros;
+    }
+
+    /**
+     * Obtiene una lista con todos los productos de la base de datos.
+     *
+     * @return lista de productos; si no hay, devuelve una lista vacía.
+     */
+    public List<Producto> obtenerTodos() {
+        List<Producto> productos = new ArrayList<>();
+        String query = "SELECT * FROM productos";
+
+        try (Connection conn = ConexionDB.obtenerConexion();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            
+            while (rs.next()) {
+                Producto producto = new Producto(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getInt("cantidad"),
+                    rs.getDouble("precio"),
+                    rs.getString("status"),
+                    rs.getInt("id_marca"),
+                    rs.getInt("id_categoria"),
+                    rs.getInt("id_sexo"),
+                    rs.getString("ruta_img")
+                );
+                productos.add(producto);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productos;
+    }
+
+    /**
+     * Obtiene un parámetro específico por su ID.
+     *
+     * @param id el ID del parámetro a buscar.
+     * @return un objeto Parametro si se encuentra, o null si no.
+     */
+    public Parametro obtenerParametroPorId(int id) {
+        String query = "SELECT id, nombre FROM parametro WHERE id = ?";
+        try (Connection conn = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Parametro(
+                    rs.getInt("id"),
+                    rs.getString("nombre")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Retorna null si no se encuentra o hay un error
     }
 }

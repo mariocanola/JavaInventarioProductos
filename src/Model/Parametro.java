@@ -67,4 +67,8 @@ public class Parametro {
     public String toString() {
         return nombre;
     }
+
+    public int darIdMarca() {
+        return id;
+    }
 }

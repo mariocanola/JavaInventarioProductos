@@ -20,17 +20,17 @@ public class ConexionDB {
      * Incluye nombre de host, puerto, nombre de la base de datos
      * y parámetros opcionales como el uso de SSL y zona horaria.
      */
-    private static final String URL = "jdbc:mysql://localhost:3306/inventario?useSSL=false&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/inventario?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
 
     /**
      * Nombre de usuario para acceder a la base de datos.
      */
-    private static final String USUARIO = "root";
+    private static final String USUARIO = "jeferson";
 
     /**
      * Contraseña del usuario de la base de datos.
      */
-    private static final String CONTRASENA = "";
+    private static final String CONTRASENA = "J3Fers0n3527*";
 
     /**
      * Establece y retorna una conexión con la base de datos MySQL.
@@ -64,5 +64,5 @@ public class ConexionDB {
                 e.printStackTrace();
             }
         }
-    }	
+    }
 }

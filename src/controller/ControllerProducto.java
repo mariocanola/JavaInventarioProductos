@@ -1,19 +1,22 @@
 package controller;
 
 import java.util.List;
+import java.util.Comparator;
 
-import DAO.productoDAO;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import Model.Parametro;
 import Model.Producto;
+import View.InterfazProductos;
 import View.PanelAgregarProducto;
+import View.PanelDetalleProducto;
+import DAO.ProductoDAO;
 
 /**
- * Controlador que coordina la interacción entre la vista {@link View.PanelAgregarProducto}
- * y la capa de persistencia {@link DAO.productoDAO}.
+ * Controlador que coordina la interacción entre la vista {@link View.InterfazProductos}
+ * y la capa de persistencia {@link DAO.ProductoDAO}.
  * <p>
  * – Carga los parámetros dinámicos (marca, sexo, categoría) y los envía a la vista.<br>
  * – Valida los datos ingresados por el usuario.<br>
@@ -24,22 +27,27 @@ import View.PanelAgregarProducto;
  */
 public class ControllerProducto {
 		
-	 private productoDAO productoDAO;
-	    private PanelAgregarProducto panel;
+	private ProductoDAO productoDAO;
+	private InterfazProductos panelPrincipalInterfazProductos;
+    private PanelAgregarProducto panelAgregarProducto;
 
 	    /**
      * Crea un controlador para la vista indicada y registra los listeners
      * necesarios.
      *
-     * @param panel instancia de la vista a controlar.
+     * @param interfazProductos instancia de la vista a controlar.
      */
-    public ControllerProducto(PanelAgregarProducto panel) {
-	        this.panel = panel;
-	        productoDAO = new productoDAO();
-        // Cargar parámetros al iniciar
-        cargarParametros();
-        // Registrar acción del botón guardar
-        this.panel.addGuardarListener(e -> agregarProducto());
+    public ControllerProducto(InterfazProductos interfazProductos, PanelAgregarProducto panelAgregarProducto) {
+            this.panelPrincipalInterfazProductos = interfazProductos;
+            this.panelAgregarProducto = panelAgregarProducto;
+            // 1. Inicializar el DAO
+            this.productoDAO = new ProductoDAO();
+            // 2. Cargar parámetros (ahora el DAO ya no es null)
+            cargarParametros();
+            // 3. Cargar productos
+            cargarProductos();
+            // 4. Registrar acción del botón guardar
+            this.panelAgregarProducto.addGuardarListener(e -> agregarProducto());
 	    }
 
 	    // Método para cargar los parámetros dinámicamente desde la base de datos
@@ -50,26 +58,56 @@ public class ControllerProducto {
     public void cargarParametros() {
 	        // Obtener las listas de marcas, sexos y categorías
 	        List<Parametro> marcas = productoDAO.obtenerParametrosPorTema("marca");
-	        List<Parametro> sexos = productoDAO.obtenerParametrosPorTema("sexo");
-	        List<Parametro> categorias = productoDAO.obtenerParametrosPorTema("categoria");
 
+	        List<Parametro> sexos = productoDAO.obtenerParametrosPorTema("sexo");
+
+	        List<Parametro> categorias = productoDAO.obtenerParametrosPorTema("categoria");
+            
 	        // Pasar los datos a la vista para que los cargue en los JComboBox
-	        panel.cargarParametros(marcas, sexos, categorias);
+	        panelAgregarProducto.cargarParametros(marcas, sexos, categorias);
+            panelPrincipalInterfazProductos.cargarParametros(marcas, sexos, categorias);
 	    }
 	    
+	    /**
+     * Consulta los productos en BD y se los pasa a la vista para que los muestre.
+     */
+    public void cargarProductos() {
+        List<Producto> productos = productoDAO.obtenerTodos();
+        // Ordenar por ID descendente (el más reciente primero)
+        productos.sort(Comparator.comparingInt(Producto::darIdProducto).reversed());
+        panelPrincipalInterfazProductos.mostrarProductos(productos);
+    }
+
+    public void mostrarDetalle(Producto producto) {
+        // Usar el DAO para obtener los nombres de los parámetros
+        Parametro marca = productoDAO.obtenerParametroPorId(producto.darIdMarca());
+        Parametro categoria = productoDAO.obtenerParametroPorId(producto.darIdCategoria());
+        Parametro sexo = productoDAO.obtenerParametroPorId(producto.darIdSexo());
+
+        // Pasar los nombres al diálogo de detalle
+        PanelDetalleProducto detalleDialog = new PanelDetalleProducto(
+            panelPrincipalInterfazProductos, 
+            producto,
+            marca != null ? marca.darNombre() : "N/A",
+            categoria != null ? categoria.darNombre() : "N/A",
+            sexo != null ? sexo.darNombre() : "N/A"
+        );
+        detalleDialog.setVisible(true);
+    }
+
 	    /**
      * Recupera los datos del formulario, los valida, gestiona la copia de la
      * imagen y, si todo es correcto, persiste el nuevo producto.
      */
     public void agregarProducto() {
         // Validaciones básicas
-        String nombre = panel.getNombre().trim();
-        double precio = panel.getPrecio();
-        int cantidad = panel.getCantidad();
-        Parametro idMarca = panel.getMarcaSeleccionada();
-        Parametro idSexo = panel.getSexoSeleccionado();
-        Parametro idCategoria = panel.getCategoriaSeleccionada();
-        String rutaImagenIngresada = panel.getImagenPath().trim();
+        String nombre = panelAgregarProducto.getNombre().trim();
+        double precio = panelAgregarProducto.getPrecio();
+        int cantidad = panelAgregarProducto.getCantidad();
+        Parametro idMarca = panelAgregarProducto.getMarcaSeleccionada();
+        Parametro idSexo = panelAgregarProducto.getSexoSeleccionado();
+        Parametro idCategoria = panelAgregarProducto.getCategoriaSeleccionada();
+        String rutaImagenIngresada = panelAgregarProducto.getImagenPath().trim();
 
         if (nombre.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(null, "El nombre no puede estar vacío", "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
@@ -87,8 +125,7 @@ public class ControllerProducto {
             javax.swing.JOptionPane.showMessageDialog(null, "Debe seleccionar marca, sexo y categoría", "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
             return;
         }
-	        // (los valores ya se obtuvieron en la sección de validación)
-        // Nota: evitamos volver a obtenerlos
+	        // Nota: evitamos volver a obtenerlos
 
 	        // Procesar imagen: copiar al directorio "imagenes" si viene de fuera
         String imagenPathRel = null;
@@ -123,9 +160,14 @@ public class ControllerProducto {
 	        boolean exito = productoDAO.agregarProducto(producto);
 
 	        if (exito) {
-	            System.out.println("Producto agregado exitosamente");
+	            javax.swing.JOptionPane.showMessageDialog(null, "Producto agregado exitosamente", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+	            panelAgregarProducto.setVisible(false);
+	            panelAgregarProducto.limpiarCampos();
+
+	            // Agregar el producto recién creado al principio de la interfaz
+	            panelPrincipalInterfazProductos.agregarProductoAlInicio(producto);
 	        } else {
-	            System.out.println("Error al agregar el producto");
+	            javax.swing.JOptionPane.showMessageDialog(null, "Error al agregar el producto", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
 	        }
 	    }
 }
