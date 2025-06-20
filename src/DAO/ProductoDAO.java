@@ -128,4 +128,30 @@ public class ProductoDAO {
         }
         return productos;
     }
+
+    /**
+     * Obtiene un parámetro específico por su ID.
+     *
+     * @param id el ID del parámetro a buscar.
+     * @return un objeto Parametro si se encuentra, o null si no.
+     */
+    public Parametro obtenerParametroPorId(int id) {
+        String query = "SELECT id, nombre FROM parametro WHERE id = ?";
+        try (Connection conn = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Parametro(
+                    rs.getInt("id"),
+                    rs.getString("nombre")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Retorna null si no se encuentra o hay un error
+    }
 }

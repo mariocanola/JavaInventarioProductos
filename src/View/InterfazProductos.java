@@ -14,7 +14,6 @@ import controller.ControllerProducto;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JCheckBoxMenuItem;

@@ -76,8 +76,19 @@ public class ControllerProducto {
     }
 
     public void mostrarDetalle(Producto producto) {
-        // Aquí podrías añadir lógica para cargar datos adicionales si fuera necesario
-        PanelDetalleProducto detalleDialog = new PanelDetalleProducto(panelPrincipalInterfazProductos, producto);
+        // Usar el DAO para obtener los nombres de los parámetros
+        Parametro marca = productoDAO.obtenerParametroPorId(producto.darIdMarca());
+        Parametro categoria = productoDAO.obtenerParametroPorId(producto.darIdCategoria());
+        Parametro sexo = productoDAO.obtenerParametroPorId(producto.darIdSexo());
+
+        // Pasar los nombres al diálogo de detalle
+        PanelDetalleProducto detalleDialog = new PanelDetalleProducto(
+            panelPrincipalInterfazProductos, 
+            producto,
+            marca != null ? marca.darNombre() : "N/A",
+            categoria != null ? categoria.darNombre() : "N/A",
+            sexo != null ? sexo.darNombre() : "N/A"
+        );
         detalleDialog.setVisible(true);
     }
 

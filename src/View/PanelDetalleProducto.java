@@ -6,47 +6,49 @@ import java.awt.*;
 
 public class PanelDetalleProducto extends JDialog {
 
-    public PanelDetalleProducto(JFrame owner, Producto producto) {
+    public PanelDetalleProducto(JFrame owner, Producto producto, String nombreMarca, String nombreCategoria, String nombreSexo) {
         super(owner, "Detalle del Producto", true);
         
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 10, 5, 10); // Un poco más de espacio
+
+        // --- Información a la Izquierda (Columnas 0 y 1) ---
+        gbc.anchor = GridBagConstraints.WEST;
+        addDetalleCampo(gbc, "Nombre:", producto.darNombreProducto(), 1);
+        addDetalleCampo(gbc, "Precio:", "$" + String.format("%.2f", producto.darPrecio()), 2);
+        addDetalleCampo(gbc, "Cantidad:", String.valueOf(producto.darCantidad()), 3);
+        addDetalleCampo(gbc, "Estado:", producto.darStatus(), 4);
+        addDetalleCampo(gbc, "Marca:", nombreMarca, 5);
+        addDetalleCampo(gbc, "Categoría:", nombreCategoria, 6);
+        addDetalleCampo(gbc, "Sexo:", nombreSexo, 7);
         
-        // Imagen
-        gbc.gridx = 0;
+        // --- Imagen a la Derecha (Columna 2) ---
+        gbc.gridx = 2;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.gridheight = 8; // Ocupa 8 filas, alineada con los detalles
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0; // Permite que la celda crezca si se redimensiona
+        gbc.weighty = 1.0;
+
         ImageIcon icon = null;
         String imagePath = producto.darImagenPath();
         if (imagePath != null && !imagePath.isEmpty()) {
             icon = new ImageIcon(imagePath);
             // Escalar la imagen para que se vea bien en el detalle
-            Image scaled = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            Image scaled = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             icon = new ImageIcon(scaled);
         }
-        add(new JLabel(icon), gbc);
+        JLabel lblImagen = new JLabel(icon);
+        lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
+        add(lblImagen, gbc);
         
-        // Resetear constraints
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-
-        // Añadir campos de detalle
-        addDetalleCampo(gbc, "ID:", String.valueOf(producto.darIdProducto()), 1);
-        addDetalleCampo(gbc, "Nombre:", producto.darNombreProducto(), 2);
-        addDetalleCampo(gbc, "Precio:", "$" + String.format("%.2f", producto.darPrecio()), 3);
-        addDetalleCampo(gbc, "Cantidad:", String.valueOf(producto.darCantidad()), 4);
-        addDetalleCampo(gbc, "Estado:", producto.darStatus(), 5);
-        addDetalleCampo(gbc, "ID Marca:", String.valueOf(producto.darIdMarca()), 6);
-        addDetalleCampo(gbc, "ID Categoría:", String.valueOf(producto.darIdCategoria()), 7);
-        addDetalleCampo(gbc, "ID Sexo:", String.valueOf(producto.darIdSexo()), 8);
-        
-        // Botón para cerrar
+        // Botón para cerrar, debajo de la información
         gbc.gridx = 0;
-        gbc.gridy = 9;
-        gbc.gridwidth = 2;
+        gbc.gridy = 8;
+        gbc.gridwidth = 2; // Ocupa las dos columnas de la info
+        gbc.gridheight = 1; // Reseteamos el height
+        gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
         JButton btnCerrar = new JButton("Cerrar");
         btnCerrar.addActionListener(e -> setVisible(false));
