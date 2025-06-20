@@ -27,6 +27,7 @@ public class InterfazProductos extends JFrame {
     private ArrayList<Parametro> comboMarca;
     private ArrayList<Parametro> comboSexo;
     private ArrayList<Parametro> comboCategoria;
+    private PanelAgregarProducto panelAgregarProducto;
 
     public InterfazProductos() {
         setTitle("Inventario");
@@ -38,6 +39,7 @@ public class InterfazProductos extends JFrame {
         comboMarca = new ArrayList<>();
         comboSexo = new ArrayList<>();
         comboCategoria = new ArrayList<>();
+        panelAgregarProducto = new PanelAgregarProducto();
         
         /* ---------- Panel superior (filtros + botón) ---------- */
         panelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
@@ -90,6 +92,7 @@ public class InterfazProductos extends JFrame {
         panelTop.add(crearFiltroChecklist("Categoría", categoriasArr));
 
         JButton btnAgregar = new JButton("Agregar Producto");
+        btnAgregar.addActionListener(e -> panelAgregarProducto.setVisible(true));
         panelTop.add(btnAgregar);
 
         panelTop.revalidate();
@@ -124,11 +127,11 @@ public class InterfazProductos extends JFrame {
         
         // Crear las vistas
         InterfazProductos interfazProductos = new InterfazProductos();
-        PanelAgregarProducto panelAgregar = new PanelAgregarProducto();
+        PanelAgregarProducto panelAgregarProducto = new PanelAgregarProducto();
 
         // Crear el controlador con ambas vistas
         // El controlador se inicializa y carga los parámetros automáticamente
-        ControllerProducto controller = new ControllerProducto(interfazProductos, panelAgregar);
+        ControllerProducto controller = new ControllerProducto(interfazProductos, panelAgregarProducto);
 
         controller.cargarParametros();
     }

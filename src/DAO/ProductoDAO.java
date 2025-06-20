@@ -12,6 +12,7 @@ import Model.ConexionDB;
  * @param producto El producto a agregar.
  * @return true si se agregó correctamente, false si hubo error.
  */
+
 /**
  * DAO encargado de la persistencia de entidades {@link Model.Producto}.
  * <p>
@@ -37,7 +38,7 @@ public class ProductoDAO {
      * @return {@code true} si la operación afectó al menos una fila; {@code false} en caso contrario.
      */
     public boolean agregarProducto(Producto producto) {
-        String query = "INSERT INTO productos (nombre, precio, cantidad, status, id_marca, id_categoria, id_sexo, ruta_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";  
+        String query = "INSERT INTO productos (nombre, precio, cantidad, status, id_marca, id_categoria, id_sexo, ruta_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.obtenerConexion(); 
             PreparedStatement stmt = conn.prepareStatement(query)) {
             
