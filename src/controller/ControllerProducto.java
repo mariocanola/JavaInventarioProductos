@@ -10,6 +10,7 @@ import Model.Parametro;
 import Model.Producto;
 import View.InterfazProductos;
 import View.PanelAgregarProducto;
+import View.PanelDetalleProducto;
 import DAO.ProductoDAO;
 
 /**
@@ -72,6 +73,12 @@ public class ControllerProducto {
     public void cargarProductos() {
         List<Producto> productos = productoDAO.obtenerTodos();
         panelPrincipalInterfazProductos.mostrarProductos(productos);
+    }
+
+    public void mostrarDetalle(Producto producto) {
+        // Aquí podrías añadir lógica para cargar datos adicionales si fuera necesario
+        PanelDetalleProducto detalleDialog = new PanelDetalleProducto(panelPrincipalInterfazProductos, producto);
+        detalleDialog.setVisible(true);
     }
 
 	    /**

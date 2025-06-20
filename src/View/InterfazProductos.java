@@ -2,7 +2,6 @@ package View;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.BorderLayout;   
@@ -33,6 +32,8 @@ public class InterfazProductos extends JFrame {
     String[] sexosArr;
     String[] marcasArr;
     String[] categoriasArr;
+
+    private ControllerProducto controller;
 
     public InterfazProductos() {
         setTitle("Inventario");
@@ -74,22 +75,12 @@ public class InterfazProductos extends JFrame {
         panelGrid.removeAll();
 
         for (Producto producto : productos) {
-            ImageIcon icon = null;
-            String imagePath = producto.darImagenPath();
-            if (imagePath != null && !imagePath.isEmpty()) {
-                // Se asume que la ruta es relativa al proyecto
-                icon = new ImageIcon(imagePath);
-            } else {
-                // Placeholder si no hay imagen
-                icon = new ImageIcon("ruta/a/placeholder.png");
-            }
-            
-            PanelCardProducto card = new PanelCardProducto(
-                icon,
-                producto.darNombreProducto(),
-                "$" + String.format("%.2f", producto.darPrecio()),
-                producto.darStatus()
-            );
+            // La acción de clic llama al controlador para mostrar el detalle
+            PanelCardProducto card = new PanelCardProducto(producto, p -> {
+                if (controller != null) {
+                    controller.mostrarDetalle(p);
+                }
+            });
             panelGrid.add(card.getPanel());
         }
 
@@ -146,10 +137,11 @@ public class InterfazProductos extends JFrame {
         return btn;
     }
 
+    public void setController(ControllerProducto controller) {
+        this.controller = controller;
+    }
+
     public static void main(String[] args) {
-//        try {
-//            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-//        } catch (Exception ignored) {}
         
         // Crear la vista principal
         InterfazProductos interfazProductos = new InterfazProductos();
@@ -158,6 +150,8 @@ public class InterfazProductos extends JFrame {
         // El panelAgregarProducto ya está inicializado en el constructor de InterfazProductos
         ControllerProducto controller = new ControllerProducto(interfazProductos, interfazProductos.panelAgregarProducto);
 
+        interfazProductos.setController(controller);
         controller.cargarParametros();
+        controller.cargarProductos();
     }
 }

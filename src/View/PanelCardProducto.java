@@ -13,21 +13,33 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import Model.Producto;
+import java.util.function.Consumer;
 
 public class PanelCardProducto {
     private JPanel panel;
 
-    public PanelCardProducto(ImageIcon img, String nombre,
-    String precio, String estado) {
-        panel = crearTarjetaProducto(img, nombre, precio, estado);
+    public PanelCardProducto(Producto producto, Consumer<Producto> onCardClick) {
+        panel = crearTarjetaProducto(producto, onCardClick);
     }
 
     public JPanel getPanel() {
         return panel;
     }
 
-    private JPanel crearTarjetaProducto(ImageIcon img, String nombre,
-    String precio, String estado) {
+    private JPanel crearTarjetaProducto(Producto producto, Consumer<Producto> onCardClick) {
+        ImageIcon img = null;
+        String imagePath = producto.darImagenPath();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            img = new ImageIcon(imagePath);
+        } else {
+            img = new ImageIcon("ruta/a/placeholder.png");
+        }
+        
+        String nombre = producto.darNombreProducto();
+        String precio = "$" + String.format("%.2f", producto.darPrecio());
+        String estado = producto.darStatus();
+
         JPanel card = new JPanel() {
             @Override
             public void updateUI() {
@@ -71,6 +83,13 @@ public class PanelCardProducto {
 
         // Efecto hover
         card.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (onCardClick != null) {
+                    onCardClick.accept(producto);
+                }
+            }
+
             @Override
             public void mouseEntered(MouseEvent e) {
                 card.setBorder(BorderFactory.createLineBorder(new Color(0, 172, 237), 2));
