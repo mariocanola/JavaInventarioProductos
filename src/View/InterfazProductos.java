@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.BorderLayout;   
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import Model.Parametro;
 import controller.ControllerProducto;
@@ -30,8 +28,6 @@ public class InterfazProductos extends JFrame {
     private ArrayList<Parametro> comboSexo;
     private ArrayList<Parametro> comboCategoria;
 
-    
-
     public InterfazProductos() {
         setTitle("Inventario");
         setSize(900, 600);
@@ -47,8 +43,6 @@ public class InterfazProductos extends JFrame {
         panelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panelTop.setBackground(Color.DARK_GRAY);
 
-        JButton btnAgregar = new JButton("agregar producto");
-        panelTop.add(btnAgregar);
         // Espacio horizontal entre componentes
         panelTop.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         add(panelTop, BorderLayout.NORTH);
@@ -95,7 +89,7 @@ public class InterfazProductos extends JFrame {
         panelTop.add(crearFiltroChecklist("Marca", marcasArr));
         panelTop.add(crearFiltroChecklist("Categoría", categoriasArr));
 
-        JButton btnAgregar = new JButton("agregar producto");
+        JButton btnAgregar = new JButton("Agregar Producto");
         panelTop.add(btnAgregar);
 
         panelTop.revalidate();
@@ -124,14 +118,18 @@ public class InterfazProductos extends JFrame {
     }
 
     public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {}
-        SwingUtilities.invokeLater(InterfazProductos::new);
-
+//        try {
+//            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+//        } catch (Exception ignored) {}
+        
+        // Crear las vistas
         InterfazProductos interfazProductos = new InterfazProductos();
+        PanelAgregarProducto panelAgregar = new PanelAgregarProducto();
 
-        ControllerProducto controller = new ControllerProducto(interfazProductos);
+        // Crear el controlador con ambas vistas
+        // El controlador se inicializa y carga los parámetros automáticamente
+        ControllerProducto controller = new ControllerProducto(interfazProductos, panelAgregar);
+
         controller.cargarParametros();
     }
 }

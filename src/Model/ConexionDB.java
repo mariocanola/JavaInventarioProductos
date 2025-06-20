@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * <p>Requiere que el driver JDBC de MySQL esté incluido en el classpath.</p>
  * 
  */
-public class ConexionDb {
+public class ConexionDB {
 
     /**
      * URL de conexión a la base de datos.

@@ -38,10 +38,11 @@ public class ControllerProducto {
     public ControllerProducto(InterfazProductos interfazProductos, PanelAgregarProducto panelAgregarProducto) {
             this.panelPrincipalInterfazProductos = interfazProductos;
             this.panelAgregarProducto = panelAgregarProducto;
-            productoDAO = new ProductoDAO();
-            // Cargar parámetros al iniciar
+            // 1. Inicializar el DAO
+            this.productoDAO = new ProductoDAO();
+            // 2. Cargar parámetros (ahora el DAO ya no es null)
             cargarParametros();
-            // Registrar acción del botón guardar
+            // 3. Registrar acción del botón guardar
             this.panelAgregarProducto.addGuardarListener(e -> agregarProducto());
 	    }
 
@@ -53,11 +54,14 @@ public class ControllerProducto {
     public void cargarParametros() {
 	        // Obtener las listas de marcas, sexos y categorías
 	        List<Parametro> marcas = productoDAO.obtenerParametrosPorTema("marca");
-	        List<Parametro> sexos = productoDAO.obtenerParametrosPorTema("sexo");
-	        List<Parametro> categorias = productoDAO.obtenerParametrosPorTema("categoria");
 
+	        List<Parametro> sexos = productoDAO.obtenerParametrosPorTema("sexo");
+
+	        List<Parametro> categorias = productoDAO.obtenerParametrosPorTema("categoria");
+            
 	        // Pasar los datos a la vista para que los cargue en los JComboBox
 	        panelAgregarProducto.cargarParametros(marcas, sexos, categorias);
+            panelPrincipalInterfazProductos.cargarParametros(marcas, sexos, categorias);
 	    }
 	    
 	    /**
@@ -122,7 +126,6 @@ public class ControllerProducto {
         Producto producto = new Producto(0, nombre, cantidad, precio, "Disponible", idMarca.darId(), idCategoria.darId(), idSexo.darId(), imagenPathRel);
 	
 	        // Llamar al DAO para agregar el producto
-	        ProductoDAO productoDAO = new ProductoDAO();
 	        boolean exito = productoDAO.agregarProducto(producto);
 
 	        if (exito) {

@@ -1,12 +1,10 @@
 src/DAO/ProductoDAO.java
-src/DAO/ParametroDAO.java
 src/controller/ControllerProducto.java
 src/View/PanelAgregarProducto.java
 src/View/PanelCardProducto.java
 src/View/InterfazProductos.java
 src/Model/Producto.java
 src/Model/Tema.java
-src/Model/ConexionDb.java
+src/Model/ConexionDB.java
 src/Model/Parametro.java
 src/Model/TemaParametro.java
-src/Model/MainPrueba1.java
