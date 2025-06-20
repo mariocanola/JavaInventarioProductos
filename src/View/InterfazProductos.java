@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -307,17 +308,17 @@ public class InterfazProductos extends JFrame {
             }
             
             // Filtrar por marcas si hay seleccionadas
-            if (!marcasSeleccionadas.isEmpty()) {
+            if (cumpleFiltros && !marcasSeleccionadas.isEmpty()) {
                 cumpleFiltros = marcasSeleccionadas.contains(nombreMarca);
             }
             
             // Filtrar por sexos si hay seleccionados
-            if (!sexosSeleccionados.isEmpty()) {
+            if (cumpleFiltros && !sexosSeleccionados.isEmpty()) {
                 cumpleFiltros = sexosSeleccionados.contains(nombreSexo);
             }
             
             // Filtrar por categorías si hay seleccionadas
-            if (!categoriasSeleccionadas.isEmpty()) {
+            if (cumpleFiltros && !categoriasSeleccionadas.isEmpty()) {
                 cumpleFiltros = categoriasSeleccionadas.contains(nombreCategoria);
             }
             
