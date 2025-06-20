@@ -33,6 +33,9 @@ public class Producto {
     private int idCategoria;
     
     private int idSexo;
+
+    /** Ruta del archivo de imagen asociado al producto */
+    private String imagenPath;
     
     
 
@@ -46,7 +49,7 @@ public class Producto {
      * @param status si esta disponible el producto o no
      * @param idTemaParametro
      */
-    public Producto(int id, String nombre, int cantidad, double precio, String status, int idMarca , int idCategoria, int idSexo) {
+    public Producto(int id, String nombre, int cantidad, double precio, String status, int idMarca , int idCategoria, int idSexo, String imagenPath) {
         this.id = id;
         this.nombre = nombre;
         this.cantidad = cantidad;
@@ -55,6 +58,16 @@ public class Producto {
         this.idMarca = idMarca;
         this.idCategoria = idCategoria;
         this.idSexo = idSexo;
+        this.imagenPath = imagenPath;
+    }
+
+    /**
+     * Crea un producto cuando todavía no se cuenta con la ruta de la imagen.
+     * Se delega al constructor principal enviando <code>null</code> como imagenPath.
+     */
+    public Producto(int id, String nombre, int cantidad, double precio, String status,
+                    int idMarca , int idCategoria, int idSexo) {
+        this(id, nombre, cantidad, precio, status, idMarca, idCategoria, idSexo, null);
     }
 
     /**
@@ -146,18 +159,27 @@ public class Producto {
     }
     
     public int darIdCategoria() {
-    	return idCategoria;
+        return idCategoria;
     }
     
     public void setIdCategoria(int idCategoria) {
-    	this.idCategoria = idCategoria;
+        this.idCategoria = idCategoria;
     }
     
+    public String darImagenPath() {
+        return imagenPath;
+    }
+
+    public void setImagenPath(String imagenPath) {
+        this.imagenPath = imagenPath;
+    }
+
     public int darIdSexo() {
-    	return idSexo;
+        return idSexo;
     }
     
     public void setIdSexo(int idSexo) {
-    	this.idSexo = idSexo;
+        this.idSexo = idSexo;
     }
+
 }

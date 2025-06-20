@@ -3,8 +3,20 @@ package View;
 import javax.swing.JFrame;
 import controller.ControllerProducto;
 
+/**
+ * Punto de entrada de la aplicación de inventario.
+ * <p>
+ * Construye la vista {@link PanelAgregarProducto}, la enlaza con su
+ * {@link controller.ControllerProducto} y muestra la ventana principal.
+ * </p>
+ */
 public class Main {
 
+    /**
+     * Método principal. Inicializa MVC y lanza la interfaz.
+     *
+     * @param args argumentos de línea de comandos (no utilizados).
+     */
     public static void main(String[] args) {
         // Crear la vista donde se agrega el producto
         PanelAgregarProducto panel = new PanelAgregarProducto();

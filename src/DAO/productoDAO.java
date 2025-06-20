@@ -1,26 +1,45 @@
 package DAO;
 
 import Model.Producto;
+import Model.Parametro;
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
+import Model.ConexionDB;
 
 /**
  * Agrega un producto a la base de datos.
  * @param producto El producto a agregar.
  * @return true si se agregó correctamente, false si hubo error.
  */
+/**
+ * DAO encargado de la persistencia de entidades {@link Model.Producto}.
+ * <p>
+ * Proporciona operaciones básicas para:
+ * <ul>
+ *   <li>Insertar productos en la base de datos.</li>
+ *   <li>Consultar valores de parámetros dinámicos (marcas, sexos, categorías).</li>
+ * </ul>
+ *
+ * La clase utiliza {@link Model.ConexionDB} para obtener conexiones JDBC y se
+ * responsabiliza de cerrar los recursos mediante try-with-resources.
+ *
+ * @author Mario
+ * @since 1.0
+ */
 public class productoDAO {
 
-    // Método para obtener la conexión a la base de datos
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/inventario", "root", ""); // Ajusta los parámetros de conexión
-    }
-
     // Método para agregar un producto
+    /**
+     * Inserta un nuevo {@link Producto} en la tabla {@code productos}.
+     *
+     * @param producto instancia a persistir. Debe contener todos los campos requeridos.
+     * @return {@code true} si la operación afectó al menos una fila; {@code false} en caso contrario.
+     */
     public boolean agregarProducto(Producto producto) {
-        String query = "INSERT INTO productos (nombre, precio, cantidad, status, id_marca, id_categoria, id_sexo) VALUES (?, ?, ?, ?, ?, ?, ?)";
-       
-        try (Connection conn = getConnection(); 
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        String query = "INSERT INTO productos (nombre, precio, cantidad, status, id_marca, id_categoria, id_sexo, ruta_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";  
+        try (Connection conn = ConexionDB.obtenerConexion(); 
+            PreparedStatement stmt = conn.prepareStatement(query)) {
             
             // Asignar los valores del objeto Producto al PreparedStatement
             stmt.setString(1, producto.darNombreProducto());
@@ -30,6 +49,7 @@ public class productoDAO {
             stmt.setInt(5, producto.darIdMarca());
             stmt.setInt(6, producto.darIdCategoria());
             stmt.setInt(7, producto.darIdSexo());
+            stmt.setString(8, producto.darImagenPath());
             
             // Ejecutar la inserción
             int rowsInserted = stmt.executeUpdate();
@@ -41,5 +61,36 @@ public class productoDAO {
             e.printStackTrace();
             return false;  // Si ocurre un error, retornamos 'false'
         }
+    }
+
+    // Método para obtener parámetros por tema (marca, sexo, categoría)
+    /**
+     * Obtiene una lista de {@link Parametro parámetros} correspondientes a un tema.
+     *
+     * @param nombreTema nombre del tema (por ejemplo «marca», «sexo» o «categoria»).
+     * @return lista de parámetros; si no existen devuelve lista vacía (nunca {@code null}).
+     */
+    public List<Parametro> obtenerParametrosPorTema(String nombreTema) {
+        List<Parametro> parametros = new ArrayList<>();
+        String query = "SELECT p.id, p.nombre " +
+                "FROM `parametro` p " +
+                "JOIN `tema_parametro` tp ON p.id = tp.id_parametro " +
+                "JOIN `tema` t ON t.id = tp.id_tema " +
+                "WHERE t.nombre = ?";
+
+        try (Connection conn = ConexionDB.obtenerConexion();
+            PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, nombreTema);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Parametro parametro = new Parametro(
+                        rs.getInt("id"),
+                        rs.getString("nombre"));
+                parametros.add(parametro);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return parametros;
     }
 }
