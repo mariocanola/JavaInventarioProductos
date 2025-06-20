@@ -56,7 +56,7 @@ public class InterfazProductos extends JFrame {
         add(panelTop, BorderLayout.NORTH);
 
         /* ---------- Panel central (grid de productos) ---------- */
-        panelGrid = new JPanel(new GridLayout(0, 4, 15, 15));  // 4 columnas, filas automáticas
+        panelGrid = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
         panelGrid.setBackground(Color.BLACK);
 
         JScrollPane scroll = new JScrollPane(panelGrid,
