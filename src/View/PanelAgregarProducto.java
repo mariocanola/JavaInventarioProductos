@@ -15,7 +15,7 @@ public class PanelAgregarProducto extends JDialog {
     private static final Color SECONDARY_COLOR = new Color(92, 184, 92);
     private static final Color BACKGROUND_COLOR = new Color(248, 249, 250);
     private static final Color BORDER_COLOR = new Color(206, 212, 218);
-    private static final Color TEXT_COLOR = new Color(73, 80, 87);
+
     
     // Fuentes
     private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 20);
