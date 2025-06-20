@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.List;
+import java.util.Comparator;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +73,8 @@ public class ControllerProducto {
      */
     public void cargarProductos() {
         List<Producto> productos = productoDAO.obtenerTodos();
+        // Ordenar por ID descendente (el más reciente primero)
+        productos.sort(Comparator.comparingInt(Producto::darIdProducto).reversed());
         panelPrincipalInterfazProductos.mostrarProductos(productos);
     }
 
@@ -157,9 +160,14 @@ public class ControllerProducto {
 	        boolean exito = productoDAO.agregarProducto(producto);
 
 	        if (exito) {
-	            System.out.println("Producto agregado exitosamente");
+	            javax.swing.JOptionPane.showMessageDialog(null, "Producto agregado exitosamente", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+	            panelAgregarProducto.setVisible(false);
+	            panelAgregarProducto.limpiarCampos();
+
+	            // Agregar el producto recién creado al principio de la interfaz
+	            panelPrincipalInterfazProductos.agregarProductoAlInicio(producto);
 	        } else {
-	            System.out.println("Error al agregar el producto");
+	            javax.swing.JOptionPane.showMessageDialog(null, "Error al agregar el producto", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
 	        }
 	    }
 }
