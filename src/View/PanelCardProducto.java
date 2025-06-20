@@ -1,4 +1,4 @@
-package Interfaz;
+package View;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -28,12 +28,18 @@ public class PanelCardProducto {
 
     private JPanel crearTarjetaProducto(ImageIcon img, String nombre,
     String precio, String estado) {
-
-        JPanel card = new JPanel();
+        JPanel card = new JPanel() {
+            @Override
+            public void updateUI() {
+                super.updateUI();
+                // Set background after UI is initialized
+                setBackground(new Color(40, 40, 40));
+            }
+        };
         card.setPreferredSize(new Dimension(180, 220));
-        card.setBackground(new Color(40, 40, 40));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        card.setOpaque(true);
 
         JLabel lblImg = new JLabel();
         if (img != null && img.getIconWidth() > 0) {

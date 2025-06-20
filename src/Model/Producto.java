@@ -33,8 +33,6 @@ public class Producto {
     private int idCategoria;
     
     private int idSexo;
-    
-    
 
     /**
      * Crea un producto con todos sus atributos inicializados.

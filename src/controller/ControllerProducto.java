@@ -3,23 +3,18 @@ package controller;
 import java.util.List;
 
 import DAO.ParametroDAO;
-import DAO.productoDAO;
 import Model.Parametro;
-import Model.Producto;
-import View.PanelAgregarProducto;
+import View.InterfazProductos;
 
 public class ControllerProducto {
 		
 	 private ParametroDAO parametroDAO;
-	    private PanelAgregarProducto panel;
+	    private InterfazProductos panel;
 
-	    public ControllerProducto(PanelAgregarProducto panel) {
-	        this.panel = panel;
+	    public ControllerProducto(InterfazProductos interfazProductos) {
+	        this.panel = interfazProductos;
 	        parametroDAO = new ParametroDAO();
-        // Cargar parámetros al iniciar
-        cargarParametros();
-        // Registrar acción del botón guardar
-        this.panel.addGuardarListener(e -> agregarProducto());
+	        cargarParametros();
 	    }
 
 	    // Método para cargar los parámetros dinámicamente desde la base de datos
@@ -32,8 +27,9 @@ public class ControllerProducto {
 	        // Pasar los datos a la vista para que los cargue en los JComboBox
 	        panel.cargarParametros(marcas, sexos, categorias);
 	    }
-	    
-	    public void agregarProducto() {
+
+		/*
+		 public void agregarProducto() {
 	        // Obtener los valores de la vista
 	        String nombre = panel.getNombre();
 	        double precio = panel.getPrecio();
@@ -47,7 +43,7 @@ public class ControllerProducto {
 	                                         idMarca.darId(), idCategoria.darId(), idSexo.darId());
 	
 	        // Llamar al DAO para agregar el producto
-	        productoDAO productoDAO = new productoDAO();
+	        ProductoDAO productoDAO = new ProductoDAO();
 	        boolean exito = productoDAO.agregarProducto(producto);
 
 	        if (exito) {
@@ -56,4 +52,5 @@ public class ControllerProducto {
 	            System.out.println("Error al agregar el producto");
 	        }
 	    }
+		*/
 }

@@ -1,25 +1,36 @@
-package Interfaz;
+package View;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.BorderLayout;   
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import Model.Parametro;
+import controller.ControllerProducto;
+
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JScrollPane;
-import Interfaz.PanelCardProducto;
-
+import javax.swing.JCheckBoxMenuItem;
 
 public class InterfazProductos extends JFrame {
 
     private JPanel panelGrid;
+    private JPanel panelTop;
+
+    private ArrayList<Parametro> comboMarca;
+    private ArrayList<Parametro> comboSexo;
+    private ArrayList<Parametro> comboCategoria;
+
+    
 
     public InterfazProductos() {
         setTitle("Inventario");
@@ -27,18 +38,14 @@ public class InterfazProductos extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // Inicializar las listas   
+        comboMarca = new ArrayList<>();
+        comboSexo = new ArrayList<>();
+        comboCategoria = new ArrayList<>();
+        
         /* ---------- Panel superior (filtros + botón) ---------- */
-        JPanel panelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        panelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panelTop.setBackground(Color.DARK_GRAY);
-
-        // Filtros desplegables (checklist)
-        String[] opcionesSexo = {"Hombre", "Mujer", "Unisex"};
-        String[] opcionesMarca = {"Marca A", "Marca B", "Marca C"};
-        String[] opcionesCategoria = {"Zapatos", "Camisas", "Pantalones"};
-
-        panelTop.add(crearFiltroChecklist("Sexo", opcionesSexo));
-        panelTop.add(crearFiltroChecklist("Marca", opcionesMarca));
-        panelTop.add(crearFiltroChecklist("Categoría", opcionesCategoria));
 
         JButton btnAgregar = new JButton("agregar producto");
         panelTop.add(btnAgregar);
@@ -69,7 +76,32 @@ public class InterfazProductos extends JFrame {
         setVisible(true);
     }
 
-    /* ---------- Utilidades ---------- */
+    public void cargarParametros(List<Parametro> marcas, List<Parametro> sexos, List<Parametro> categorias) {
+
+        this.comboMarca.clear();
+        this.comboMarca.addAll(marcas);
+        this.comboSexo.clear();
+        this.comboSexo.addAll(sexos);
+        this.comboCategoria.clear();
+        this.comboCategoria.addAll(categorias);
+
+        panelTop.removeAll();
+
+        String[] marcasArr = this.comboMarca.stream().map(Parametro::darNombre).toArray(String[]::new);
+        String[] sexosArr = this.comboSexo.stream().map(Parametro::darNombre).toArray(String[]::new);
+        String[] categoriasArr = this.comboCategoria.stream().map(Parametro::darNombre).toArray(String[]::new);
+
+        panelTop.add(crearFiltroChecklist("Sexo", sexosArr));
+        panelTop.add(crearFiltroChecklist("Marca", marcasArr));
+        panelTop.add(crearFiltroChecklist("Categoría", categoriasArr));
+
+        JButton btnAgregar = new JButton("agregar producto");
+        panelTop.add(btnAgregar);
+
+        panelTop.revalidate();
+        panelTop.repaint();
+    }
+
     private JButton crearFiltroChecklist(String titulo, String[] opciones) {
         JButton btn = new JButton(titulo + " \u25BE"); // flecha hacia abajo
         btn.setFocusPainted(false);
@@ -96,5 +128,10 @@ public class InterfazProductos extends JFrame {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception ignored) {}
         SwingUtilities.invokeLater(InterfazProductos::new);
+
+        InterfazProductos interfazProductos = new InterfazProductos();
+
+        ControllerProducto controller = new ControllerProducto(interfazProductos);
+        controller.cargarParametros();
     }
 }

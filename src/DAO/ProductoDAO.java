@@ -2,24 +2,20 @@ package DAO;
 
 import Model.Producto;
 import java.sql.*;
+import Model.ConexionDb;
 
 /**
  * Agrega un producto a la base de datos.
  * @param producto El producto a agregar.
  * @return true si se agregó correctamente, false si hubo error.
  */
-public class productoDAO {
-
-    // Método para obtener la conexión a la base de datos
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/inventario", "root", ""); // Ajusta los parámetros de conexión
-    }
+public class ProductoDAO {
 
     // Método para agregar un producto
     public boolean agregarProducto(Producto producto) {
         String query = "INSERT INTO productos (nombre, precio, cantidad, status, id_marca, id_categoria, id_sexo) VALUES (?, ?, ?, ?, ?, ?, ?)";
        
-        try (Connection conn = getConnection(); 
+        try (Connection conn = ConexionDb.obtenerConexion(); 
              PreparedStatement stmt = conn.prepareStatement(query)) {
             
             // Asignar los valores del objeto Producto al PreparedStatement

@@ -1,6 +1,7 @@
 package DAO;
 
 import Model.Parametro;
+import Model.ConexionDb;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ public class ParametroDAO {
 
     // Método para obtener la conexión a la base de datos
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/inventario", "root", ""); // Reemplaza los valores de conexión según sea necesario
+        return ConexionDb.obtenerConexion();
     }
 
     public List<Parametro> obtenerParametrosPorTema(String nombreTema) {
