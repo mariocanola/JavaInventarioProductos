@@ -72,7 +72,26 @@ public class ControllerProducto {
      * Consulta los productos en BD y se los pasa a la vista para que los muestre.
      */
     public void cargarProductos() {
-        List<Producto> productos = productoDAO.obtenerTodos();
+        List<Producto> productos = obtenerTodosLosProductos();
+        // Ordenar por ID descendente (el más reciente primero)
+        productos.sort(Comparator.comparingInt(Producto::darIdProducto).reversed());
+        panelPrincipalInterfazProductos.mostrarProductos(productos);
+    }
+    
+    /**
+     * Obtiene todos los productos disponibles en el sistema.
+     * @return Lista de todos los productos.
+     */
+    public List<Producto> obtenerTodosLosProductos() {
+        return productoDAO.obtenerTodos();
+    }
+    
+    /**
+     * Carga los productos filtrados por ID de marca
+     * @param idMarca ID de la marca por la que filtrar
+     */
+    public void cargarProductosPorMarca(int idMarca) {
+        List<Producto> productos = productoDAO.obtenerProductosPorMarca(idMarca);
         // Ordenar por ID descendente (el más reciente primero)
         productos.sort(Comparator.comparingInt(Producto::darIdProducto).reversed());
         panelPrincipalInterfazProductos.mostrarProductos(productos);

@@ -130,6 +130,43 @@ public class ProductoDAO {
     }
 
     /**
+     * Obtiene una lista de productos filtrados por ID de marca.
+     *
+     * @param idMarca ID de la marca por la que filtrar.
+     * @return lista de productos de la marca especificada; lista vacía si no hay coincidencias.
+     */
+    public List<Producto> obtenerProductosPorMarca(int idMarca) {
+        List<Producto> productos = new ArrayList<>();
+        String query = "SELECT * FROM productos WHERE id_marca = ?";
+
+        try (Connection conn = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setInt(1, idMarca);
+            ResultSet rs = stmt.executeQuery();
+            
+            while (rs.next()) {
+                Producto producto = new Producto(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getInt("cantidad"),
+                    rs.getDouble("precio"),
+                    rs.getString("status"),
+                    rs.getInt("id_marca"),
+                    rs.getInt("id_categoria"),
+                    rs.getInt("id_sexo"),
+                    rs.getString("ruta_img")
+                );
+                productos.add(producto);
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productos;
+    }
+
+    /**
      * Obtiene un parámetro específico por su ID.
      *
      * @param id el ID del parámetro a buscar.
@@ -154,4 +191,6 @@ public class ProductoDAO {
         }
         return null; // Retorna null si no se encuentra o hay un error
     }
+
+    
 }
