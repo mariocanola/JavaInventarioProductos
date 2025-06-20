@@ -25,12 +25,12 @@ public class ConexionDB {
     /**
      * Nombre de usuario para acceder a la base de datos.
      */
-    private static final String USUARIO = "jeferson";
+    private static final String USUARIO = "root";
 
     /**
      * Contraseña del usuario de la base de datos.
      */
-    private static final String CONTRASENA = "J3Fers0n3527*";
+    private static final String CONTRASENA = "";
 
     /**
      * Establece y retorna una conexión con la base de datos MySQL.
