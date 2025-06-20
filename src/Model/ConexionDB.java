@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import Config.Config;
+
 /**
  * Clase que maneja la conexión a la base de datos MySQL.
  * 
@@ -13,25 +15,31 @@ import java.sql.SQLException;
  * <p>Requiere que el driver JDBC de MySQL esté incluido en el classpath.</p>
  * 
  */
-public class ConexionDB {
+public class ConexionDB extends Config{
 
     /**
      * URL de conexión a la base de datos.
      * Incluye nombre de host, puerto, nombre de la base de datos
      * y parámetros opcionales como el uso de SSL y zona horaria.
      */
-    private static final String URL = "jdbc:mysql://localhost:3306/inventario?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
+    private static String URL = null;
 
     /**
      * Nombre de usuario para acceder a la base de datos.
      */
-    private static final String USUARIO = "root";
+    private static String USUARIO = null;
 
     /**
      * Contraseña del usuario de la base de datos.
      */
-    private static final String CONTRASENA = "";
+    private static String CONTRASENA = null;
 
+    public static void init() {
+        Config config = new Config();
+        URL = config.getDB_URL();
+        USUARIO = config.getDB_USUARIO();
+        CONTRASENA = config.getDB_CONTRASENA();
+    }
     /**
      * Establece y retorna una conexión con la base de datos MySQL.
      * 
