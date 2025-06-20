@@ -29,6 +29,10 @@ public class InterfazProductos extends JFrame {
     private ArrayList<Parametro> comboCategoria;
     private PanelAgregarProducto panelAgregarProducto;
 
+    String[] sexosArr;
+    String[] marcasArr;
+    String[] categoriasArr;
+
     public InterfazProductos() {
         setTitle("Inventario");
         setSize(900, 600);
@@ -39,8 +43,9 @@ public class InterfazProductos extends JFrame {
         comboMarca = new ArrayList<>();
         comboSexo = new ArrayList<>();
         comboCategoria = new ArrayList<>();
-        panelAgregarProducto = new PanelAgregarProducto();
-        
+        // Crear el diálogo una sola vez
+        panelAgregarProducto = new PanelAgregarProducto(this);
+
         /* ---------- Panel superior (filtros + botón) ---------- */
         panelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panelTop.setBackground(Color.DARK_GRAY);
@@ -81,16 +86,17 @@ public class InterfazProductos extends JFrame {
         this.comboCategoria.clear();
         this.comboCategoria.addAll(categorias);
 
-        panelTop.removeAll();
+        this.panelTop.removeAll();
 
-        String[] marcasArr = this.comboMarca.stream().map(Parametro::darNombre).toArray(String[]::new);
-        String[] sexosArr = this.comboSexo.stream().map(Parametro::darNombre).toArray(String[]::new);
-        String[] categoriasArr = this.comboCategoria.stream().map(Parametro::darNombre).toArray(String[]::new);
-
+        this.sexosArr = this.comboSexo.stream().map(Parametro::darNombre).toArray(String[]::new);
+        this.marcasArr = this.comboMarca.stream().map(Parametro::darNombre).toArray(String[]::new);
+        this.categoriasArr = this.comboCategoria.stream().map(Parametro::darNombre).toArray(String[]::new);
+        
+        // Add the filter checklists with the loaded data
         panelTop.add(crearFiltroChecklist("Sexo", sexosArr));
         panelTop.add(crearFiltroChecklist("Marca", marcasArr));
         panelTop.add(crearFiltroChecklist("Categoría", categoriasArr));
-
+   
         JButton btnAgregar = new JButton("Agregar Producto");
         btnAgregar.addActionListener(e -> panelAgregarProducto.setVisible(true));
         panelTop.add(btnAgregar);
@@ -125,13 +131,12 @@ public class InterfazProductos extends JFrame {
 //            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 //        } catch (Exception ignored) {}
         
-        // Crear las vistas
+        // Crear la vista principal
         InterfazProductos interfazProductos = new InterfazProductos();
-        PanelAgregarProducto panelAgregarProducto = new PanelAgregarProducto();
 
-        // Crear el controlador con ambas vistas
-        // El controlador se inicializa y carga los parámetros automáticamente
-        ControllerProducto controller = new ControllerProducto(interfazProductos, panelAgregarProducto);
+        // Crear el controlador con la vista principal
+        // El panelAgregarProducto ya está inicializado en el constructor de InterfazProductos
+        ControllerProducto controller = new ControllerProducto(interfazProductos, interfazProductos.panelAgregarProducto);
 
         controller.cargarParametros();
     }

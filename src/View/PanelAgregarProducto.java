@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
  * @author Mario
  * @since 1.0
  */
-public class PanelAgregarProducto extends JPanel {
+public class PanelAgregarProducto extends JDialog {
 
     private JTextField txtNombre, txtPrecio, txtCantidad, txtImagen;
     private JComboBox<Parametro> comboMarca, comboSexo, comboCategoria;
@@ -31,7 +31,9 @@ public class PanelAgregarProducto extends JPanel {
      * {@link GridBagLayout}. No recibe parámetros porque la vista no depende de
      * otros componentes para su creación.
      */
-    public PanelAgregarProducto() {
+    public PanelAgregarProducto(JFrame owner) {
+        super(owner, "Agregar Producto", true); // Título y modalidad
+        
         // Configuración de la interfaz con GridBagLayout
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -133,6 +135,12 @@ public class PanelAgregarProducto extends JPanel {
         add(btnGuardar, gbc);
         gbc.gridx = 1; gbc.gridy = row; gbc.weightx = 0;
         add(btnCancelar, gbc);
+        
+        // Acción para el botón Cancelar
+        btnCancelar.addActionListener(e -> setVisible(false));
+
+        pack(); // Ajusta el tamaño de la ventana al contenido
+        setLocationRelativeTo(owner); // Centra el diálogo respecto a la ventana principal
     }
 
     // Método para cargar marcas, sexos y categorías en los JComboBox
