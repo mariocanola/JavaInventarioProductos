@@ -2,72 +2,196 @@ package View;
 
 import Model.Producto;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 
 public class PanelDetalleProducto extends JDialog {
 
+    // Colores personalizados
+    private static final Color PRIMARY_COLOR = new Color(51, 122, 183);
+    private static final Color SECONDARY_COLOR = new Color(92, 184, 92);
+    private static final Color BACKGROUND_COLOR = new Color(248, 249, 250);
+    private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 18);
+    private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 12);
+    private static final Font VALUE_FONT = new Font("Segoe UI", Font.PLAIN, 12);
+
     public PanelDetalleProducto(JFrame owner, Producto producto, String nombreMarca, String nombreCategoria, String nombreSexo) {
         super(owner, "Detalle del Producto", true);
         
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10); // Un poco más de espacio
-
-        // --- Información a la Izquierda (Columnas 0 y 1) ---
-        gbc.anchor = GridBagConstraints.WEST;
-        addDetalleCampo(gbc, "Nombre:", producto.darNombreProducto(), 1);
-        addDetalleCampo(gbc, "Precio:", "$" + String.format("%.2f", producto.darPrecio()), 2);
-        addDetalleCampo(gbc, "Cantidad:", String.valueOf(producto.darCantidad()), 3);
-        addDetalleCampo(gbc, "Estado:", producto.darStatus(), 4);
-        addDetalleCampo(gbc, "Marca:", nombreMarca, 5);
-        addDetalleCampo(gbc, "Categoría:", nombreCategoria, 6);
-        addDetalleCampo(gbc, "Sexo:", nombreSexo, 7);
+        // Configuración principal del diálogo
+        setLayout(new BorderLayout(10, 10));
+        getContentPane().setBackground(BACKGROUND_COLOR);
+        ((JComponent) getContentPane()).setBorder(new EmptyBorder(15, 15, 15, 15));
         
-        // --- Imagen a la Derecha (Columna 2) ---
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.gridheight = 8; // Ocupa 8 filas, alineada con los detalles
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0; // Permite que la celda crezca si se redimensiona
-        gbc.weighty = 1.0;
-
+        // Panel de encabezado
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel titleLabel = new JLabel("DETALLES DEL PRODUCTO");
+        titleLabel.setFont(TITLE_FONT);
+        titleLabel.setForeground(PRIMARY_COLOR);
+        headerPanel.setBackground(BACKGROUND_COLOR);
+        headerPanel.add(titleLabel);
+        
+        // Panel principal para el contenido
+        JPanel contentPanel = new JPanel(new BorderLayout(20, 20));
+        contentPanel.setBackground(BACKGROUND_COLOR);
+        
+        // Panel para la información del producto
+        JPanel infoPanel = new JPanel(new GridBagLayout());
+        infoPanel.setBackground(BACKGROUND_COLOR);
+        infoPanel.setBorder(BorderFactory.createCompoundBorder(
+            new LineBorder(PRIMARY_COLOR, 1, true),
+            new EmptyBorder(15, 15, 15, 15)
+        ));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        
+        // Agregar campos de información
+        addStyledDetailField(infoPanel, gbc, "Nombre:", producto.darNombreProducto(), 0);
+        addStyledDetailField(infoPanel, gbc, "Precio:", "$" + String.format("%.2f", producto.darPrecio()), 1);
+        addStyledDetailField(infoPanel, gbc, "Cantidad:", String.valueOf(producto.darCantidad()), 2);
+        addStyledDetailField(infoPanel, gbc, "Estado:", producto.darStatus(), 3);
+        addStyledDetailField(infoPanel, gbc, "Marca:", nombreMarca, 4);
+        addStyledDetailField(infoPanel, gbc, "Categoría:", nombreCategoria, 5);
+        addStyledDetailField(infoPanel, gbc, "Sexo:", nombreSexo, 6);
+        
+        // Panel para la imagen
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        imagePanel.setBackground(BACKGROUND_COLOR);
+        imagePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
         ImageIcon icon = null;
         String imagePath = producto.darImagenPath();
         if (imagePath != null && !imagePath.isEmpty()) {
             icon = new ImageIcon(imagePath);
-            // Escalar la imagen para que se vea bien en el detalle
-            Image scaled = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            // Escalar la imagen manteniendo la relación de aspecto
+            Image img = icon.getImage();
+            int maxSize = 250;
+            int width = icon.getIconWidth();
+            int height = icon.getIconHeight();
+            if (width > height) {
+                height = height * maxSize / width;
+                width = maxSize;
+            } else {
+                width = width * maxSize / height;
+                height = maxSize;
+            }
+            Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             icon = new ImageIcon(scaled);
+        } else {
+            // Si no hay imagen, mostrar un placeholder
+            icon = new ImageIcon(getClass().getResource("/icons/no-image.png"));
+            if (icon.getIconWidth() < 0) { // Si no se encuentra el recurso
+                icon = new ImageIcon(createPlaceholderImage(200, 200, "Sin imagen"));
+            }
         }
-        JLabel lblImagen = new JLabel(icon);
-        lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
-        add(lblImagen, gbc);
         
-        // Botón para cerrar, debajo de la información
-        gbc.gridx = 0;
-        gbc.gridy = 8;
-        gbc.gridwidth = 2; // Ocupa las dos columnas de la info
-        gbc.gridheight = 1; // Reseteamos el height
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
+        JLabel lblImagen = new JLabel(icon, JLabel.CENTER);
+        lblImagen.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
+        imagePanel.add(lblImagen, BorderLayout.CENTER);
+        
+        // Agregar paneles al contenido
+        JPanel mainContent = new JPanel(new GridLayout(1, 2, 20, 0));
+        mainContent.setBackground(BACKGROUND_COLOR);
+        mainContent.add(infoPanel);
+        mainContent.add(imagePanel);
+        
+        contentPanel.add(mainContent, BorderLayout.CENTER);
+        
+        // Panel de botones
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        buttonPanel.setBackground(BACKGROUND_COLOR);
+        
         JButton btnCerrar = new JButton("Cerrar");
-        btnCerrar.addActionListener(e -> setVisible(false));
-        add(btnCerrar, gbc);
-
-        pack(); // Ajustar el tamaño del diálogo al contenido
-        setLocationRelativeTo(owner); // Centrar relativo a la ventana principal
+        styleButton(btnCerrar, SECONDARY_COLOR);
+        btnCerrar.addActionListener(e -> dispose());
+        buttonPanel.add(btnCerrar);
+        
+        // Agregar todos los paneles al diálogo
+        add(headerPanel, BorderLayout.NORTH);
+        add(contentPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+        
+        pack();
+        setLocationRelativeTo(owner);
+        setResizable(false);
     }
 
-    private void addDetalleCampo(GridBagConstraints gbc, String label, String value, int row) {
+    private void addStyledDetailField(JPanel panel, GridBagConstraints gbc, 
+                                     String label, String value, int row) {
+        // Etiqueta
         gbc.gridx = 0;
         gbc.gridy = row;
-        add(new JLabel(label), gbc);
+        gbc.weightx = 0.3;
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(LABEL_FONT);
+        lbl.setForeground(Color.DARK_GRAY);
+        panel.add(lbl, gbc);
         
+        // Valor
         gbc.gridx = 1;
-        JTextField txtValue = new JTextField(value, 20);
-        txtValue.setEditable(false); // Campo de solo lectura
-        txtValue.setBorder(null); // Sin borde para apariencia limpia
-        txtValue.setBackground(getBackground()); // Mismo fondo que el diálogo
-        add(txtValue, gbc);
+        gbc.weightx = 0.7;
+        JTextField txtValue = new JTextField(value);
+        txtValue.setEditable(false);
+        txtValue.setBorder(BorderFactory.createCompoundBorder(
+            new LineBorder(new Color(200, 200, 200), 1),
+            new EmptyBorder(5, 10, 5, 10)
+        ));
+        txtValue.setBackground(Color.WHITE);
+        txtValue.setFont(VALUE_FONT);
+        txtValue.setForeground(Color.BLACK);
+        txtValue.setOpaque(true);
+        panel.add(txtValue, gbc);
     }
-} 
+    
+    private void styleButton(JButton button, Color bgColor) {
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setBackground(bgColor);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setOpaque(true);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setPreferredSize(new Dimension(120, 35));
+        
+        // Efecto hover
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(bgColor.darker());
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(bgColor);
+            }
+        });
+    }
+    
+    private Image createPlaceholderImage(int width, int height, String text) {
+        // Crear una imagen de marcador de posición
+        java.awt.image.BufferedImage image = new java.awt.image.BufferedImage(
+            width, height, java.awt.image.BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = image.createGraphics();
+        
+        // Rellenar con color de fondo
+        g2d.setColor(new Color(240, 240, 240));
+        g2d.fillRect(0, 0, width, height);
+        
+        // Dibujar borde
+        g2d.setColor(new Color(200, 200, 200));
+        g2d.drawRect(0, 0, width-1, height-1);
+        
+        // Dibujar texto
+        g2d.setColor(new Color(150, 150, 150));
+        g2d.setFont(new Font("Arial", Font.ITALIC, 14));
+        FontMetrics fm = g2d.getFontMetrics();
+        int textWidth = fm.stringWidth(text);
+        int x = (width - textWidth) / 2;
+        int y = (height - fm.getHeight()) / 2 + fm.getAscent();
+        g2d.drawString(text, x, y);
+        
+        g2d.dispose();
+        return image;
+    }
+}
