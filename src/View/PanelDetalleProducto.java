@@ -11,6 +11,8 @@ public class PanelDetalleProducto extends JDialog {
     // Colores personalizados
     private static final Color PRIMARY_COLOR = new Color(51, 122, 183);
     private static final Color SECONDARY_COLOR = new Color(92, 184, 92);
+    private static final Color DANGER_COLOR = new Color(220, 53, 69);
+    private static final Color WARNING_COLOR = new Color(255, 193, 7);
     private static final Color BACKGROUND_COLOR = new Color(248, 249, 250);
     private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 18);
     private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 12);
@@ -105,9 +107,38 @@ public class PanelDetalleProducto extends JDialog {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         buttonPanel.setBackground(BACKGROUND_COLOR);
         
+        // Botón de Actualizar
+        JButton btnActualizar = new JButton("Actualizar");
+        styleButton(btnActualizar, WARNING_COLOR);
+        btnActualizar.addActionListener(e -> {
+            // Lógica para actualizar el producto
+            JOptionPane.showMessageDialog(this, "Funcionalidad de actualización en desarrollo", "En desarrollo", JOptionPane.INFORMATION_MESSAGE);
+        });
+        
+        // Botón de Eliminar
+        JButton btnEliminar = new JButton("Eliminar");
+        styleButton(btnEliminar, DANGER_COLOR);
+        btnEliminar.addActionListener(e -> {
+            // Lógica para eliminar el producto
+            int confirm = JOptionPane.showConfirmDialog(this, 
+                "¿Está seguro que desea eliminar este producto?", 
+                "Confirmar eliminación", 
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+                
+            if (confirm == JOptionPane.YES_OPTION) {
+                JOptionPane.showMessageDialog(this, "Funcionalidad de eliminación en desarrollo", "En desarrollo", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        
+        // Botón de Cerrar
         JButton btnCerrar = new JButton("Cerrar");
         styleButton(btnCerrar, SECONDARY_COLOR);
         btnCerrar.addActionListener(e -> dispose());
+        
+        // Agregar botones al panel
+        buttonPanel.add(btnActualizar);
+        buttonPanel.add(btnEliminar);
         buttonPanel.add(btnCerrar);
         
         // Agregar todos los paneles al diálogo
@@ -117,7 +148,8 @@ public class PanelDetalleProducto extends JDialog {
         
         pack();
         setLocationRelativeTo(owner);
-        setResizable(false);
+        setResizable(true);
+        setMinimumSize(new Dimension(800, 500));
     }
 
     private void addStyledDetailField(JPanel panel, GridBagConstraints gbc, 
