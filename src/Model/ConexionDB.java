@@ -46,15 +46,19 @@ public class ConexionDB extends Config{
      * 
      * @return Objeto {@link Connection} si la conexión fue exitosa, o {@code null} si falló.
      */
+    private static boolean primeraConexion = true;
+    
     public static Connection obtenerConexion() {
         Connection conexion = null;
 
         try {
             conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
-            System.out.println("Conexión exitosa a la base de datos.");
+            if (primeraConexion) {
+                System.out.println("Conexión exitosa a la base de datos.");
+                primeraConexion = false;
+            }
         } catch (SQLException e) {
-            System.out.println("Error al conectar con la base de datos.");
-            e.printStackTrace();
+            System.err.println("Error al conectar con la base de datos: " + e.getMessage());
         }
         return conexion;
     }
@@ -66,11 +70,11 @@ public class ConexionDB extends Config{
     public static void cerrarConexion(Connection conexion) {
         if (conexion != null) {
             try {
-                conexion.close();
-                System.out.println("Conexión cerrada correctamente.");
+                if (!conexion.isClosed()) {
+                    conexion.close();
+                }
             } catch (SQLException e) {
-                System.out.println("Error al cerrar la conexión.");
-                e.printStackTrace();
+                System.err.println("Error al cerrar la conexión: " + e.getMessage());
             }
         }
     }
