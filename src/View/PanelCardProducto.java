@@ -85,9 +85,14 @@ public class PanelCardProducto {
         
         // Cargar y escalar la imagen
         ImageIcon img = null;
-        String imagePath = producto.darImagenPath();
-        if (imagePath != null && !imagePath.isEmpty()) {
-            img = new ImageIcon(imagePath);
+        try {
+            String imagePath = producto.darImagenPath();
+            if (imagePath != null && !imagePath.trim().isEmpty()) {
+                img = new ImageIcon(imagePath.trim());
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading image: " + e.getMessage());
+            img = null;
         }
         
         JLabel lblImg = new JLabel();

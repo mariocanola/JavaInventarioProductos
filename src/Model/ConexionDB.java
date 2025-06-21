@@ -11,7 +11,7 @@ import Config.Config;
  * 
  * Esta clase proporciona un método estático para establecer una conexión
  * con la base de datos utilizando JDBC.
- * 
+ * q
  * <p>Requiere que el driver JDBC de MySQL esté incluido en el classpath.</p>
  * 
  */
@@ -22,19 +22,20 @@ public class ConexionDB extends Config{
      * Incluye nombre de host, puerto, nombre de la base de datos
      * y parámetros opcionales como el uso de SSL y zona horaria.
      */
-    private static String URL = null;
+    private static String URL; 
 
     /**
      * Nombre de usuario para acceder a la base de datos.
      */
-    private static String USUARIO = null;
+    private static String USUARIO;
 
     /**
      * Contraseña del usuario de la base de datos.
      */
-    private static String CONTRASENA = null;
+    private static String CONTRASENA;
 
-    public static void init() {
+    // Bloque de inicialización estático
+    static {
         Config config = new Config();
         URL = config.getDB_URL();
         USUARIO = config.getDB_USUARIO();

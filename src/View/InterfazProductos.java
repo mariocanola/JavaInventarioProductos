@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -17,7 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-
 import Model.Producto;
 import Model.Parametro;
 import controller.ControllerProducto;
@@ -103,42 +103,49 @@ public class InterfazProductos extends JFrame {
         gbc.anchor = GridBagConstraints.NORTHWEST;
 
         for (int i = 0; i < productos.size(); i++) {
-            Producto producto = productos.get(i);
-            PanelCardProducto card = new PanelCardProducto(producto, 
-                p -> {
-                    if (controller != null) controller.mostrarDetalle(p);
-                },
-                p -> {
-                    // Confirmar eliminación
-                    int confirm = JOptionPane.showConfirmDialog(
-                        this,
-                        "¿Está seguro de que desea eliminar el producto " + p.darNombreProducto() + "?",
-                        "Confirmar eliminación",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE
-                    );
-                    
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        boolean eliminado = controller.eliminarProducto(p.darIdProducto());
-                        if (eliminado) {
-                            JOptionPane.showMessageDialog(
-                                this,
-                                "Producto eliminado exitosamente",
-                                "Éxito",
-                                JOptionPane.INFORMATION_MESSAGE
-                            );
-                            // La lista se actualizará automáticamente a través del controlador
-                        } else {
-                            JOptionPane.showMessageDialog(
-                                this,
-                                "Error al eliminar el producto",
-                                "Error",
-                                JOptionPane.ERROR_MESSAGE
-                            );
-                        }
+            final Producto producto = productos.get(i);
+            
+            // Definir el manejador de clics en la tarjeta
+            Consumer<Producto> onCardClick = (Producto p) -> {
+                if (controller != null) {
+                    controller.mostrarDetalle(p);
+                }
+            };
+            
+            // Definir el manejador de eliminación
+            Consumer<Producto> onDelete = (Producto p) -> {
+                // Confirmar eliminación
+                int confirm = JOptionPane.showConfirmDialog(
+                    InterfazProductos.this,
+                    "¿Está seguro de que desea eliminar el producto " + p.darNombreProducto() + "?",
+                    "Confirmar eliminación",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+                );
+                
+                if (confirm == JOptionPane.YES_OPTION) {
+                    boolean eliminado = controller.eliminarProducto(p.darIdProducto());
+                    if (eliminado) {
+                        JOptionPane.showMessageDialog(
+                            InterfazProductos.this,
+                            "Producto eliminado exitosamente",
+                            "Éxito",
+                            JOptionPane.INFORMATION_MESSAGE
+                        );
+                        // La lista se actualizará automáticamente a través del controlador
+                    } else {
+                        JOptionPane.showMessageDialog(
+                            InterfazProductos.this,
+                            "Error al eliminar el producto",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                        );
                     }
                 }
-            );
+            };
+            
+            // Crear la tarjeta del producto
+            PanelCardProducto card = new PanelCardProducto(producto, onCardClick, onDelete);
 
             gbc.gridx = i % cardsPerRow;
             gbc.gridy = i / cardsPerRow;
@@ -376,30 +383,19 @@ public class InterfazProductos extends JFrame {
     }
     
     public void agregarProductoAlInicio(Producto producto) {
-        PanelCardProducto card = new PanelCardProducto(producto, p -> {
-            if (controller != null) {
-                controller.mostrarDetalle(p);
-            }
-        }, p -> {
-            if (controller != null) {
-                // Get the product ID and pass it to the delete method
-                controller.eliminarProducto(p.darIdProducto());
-                // Refresh the product list after deletion
-                List<Producto> productos = obtenerTodosLosProductos();
-                mostrarProductos(productos);
-            }
-        });
-
-        panelGrid.add(card.getPanel(), 0); // Lo agrega en la primera posición
-        panelGrid.revalidate();
-        panelGrid.repaint();
+        // Crear una nueva lista con el producto al inicio
+        List<Producto> nuevaLista = new ArrayList<>();
+        nuevaLista.add(producto);
+        nuevaLista.addAll(ultimaListaProductos);
+        
+        // Actualizar la interfaz con la nueva lista
+        mostrarProductos(nuevaLista);
     }
 
     public static void main(String[] args) {
-        
         // Crear la vista principal
         InterfazProductos interfazProductos = new InterfazProductos();
-
+        
         // Crear el controlador con la vista principal
         // El panelAgregarProducto ya está inicializado en el constructor de InterfazProductos
         ControllerProducto controller = new ControllerProducto(interfazProductos, interfazProductos.panelAgregarProducto);
