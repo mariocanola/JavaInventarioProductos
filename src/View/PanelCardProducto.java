@@ -17,22 +17,56 @@ public class PanelCardProducto {
     private static final Color BORDER_COLOR = new Color(222, 226, 230);
     private static final Color HOVER_BORDER_COLOR = new Color(13, 110, 253);
     private static final Color HOVER_BG_COLOR = new Color(248, 249, 250);
+    private static final Color MENU_BG_COLOR = new Color(255, 255, 255);
+    private static final Color MENU_HOVER_BG_COLOR = new Color(248, 249, 250);
+    private static final Color MENU_BORDER_COLOR = new Color(222, 226, 230);
     
     private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 14);
     private static final Font PRICE_FONT = new Font("Segoe UI", Font.BOLD, 16);
     private static final Font STATUS_FONT = new Font("Segoe UI", Font.PLAIN, 12);
+    private static final Font MENU_FONT = new Font("Segoe UI", Font.PLAIN, 13);
     
     private final JPanel panel;
 
-    public PanelCardProducto(Producto producto, Consumer<Producto> onCardClick) {
-        this.panel = crearTarjetaProducto(producto, onCardClick);
+    public PanelCardProducto(Producto producto, Consumer<Producto> onCardClick, Consumer<Producto> onDelete) {
+        this.panel = crearTarjetaProducto(producto, onCardClick, onDelete);
     }
 
     public JPanel getPanel() {
         return panel;
     }
 
-    private JPanel crearTarjetaProducto(Producto producto, Consumer<Producto> onCardClick) {
+    private JPanel crearTarjetaProducto(Producto producto, Consumer<Producto> onCardClick, Consumer<Producto> onDelete) {
+        // Crear menú contextual
+        JPopupMenu contextMenu = new JPopupMenu();
+        contextMenu.setBorder(BorderFactory.createLineBorder(MENU_BORDER_COLOR));
+        contextMenu.setBackground(MENU_BG_COLOR);
+        
+        JMenuItem deleteMenuItem = new JMenuItem("Eliminar producto");
+        deleteMenuItem.setFont(MENU_FONT);
+        deleteMenuItem.setBackground(MENU_BG_COLOR);
+        deleteMenuItem.setBorderPainted(false);
+        deleteMenuItem.setOpaque(true);
+        
+        // Efecto hover para el ítem del menú
+        deleteMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                deleteMenuItem.setBackground(MENU_HOVER_BG_COLOR);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                deleteMenuItem.setBackground(MENU_BG_COLOR);
+            }
+        });
+        
+        // Acción de eliminar
+        deleteMenuItem.addActionListener(e -> {
+            if (onDelete != null) {
+                onDelete.accept(producto);
+            }
+        });
+        
+        contextMenu.add(deleteMenuItem);
+        // Store reference to context menu for later use
         // Configuración de la tarjeta
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -103,11 +137,13 @@ public class PanelCardProducto {
         statusPanel.add(lblStatus);
         card.add(statusPanel);
 
-        // Efecto hover
+        // Efecto hover y menú contextual
         card.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (onCardClick != null) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    contextMenu.show(card, e.getX(), e.getY());
+                } else if (onCardClick != null) {
                     onCardClick.accept(producto);
                 }
             }
@@ -163,7 +199,7 @@ public class PanelCardProducto {
         g2d.drawOval(iconX, iconY, iconSize, iconSize);
         g2d.fillOval(iconX + iconSize/4, iconY + iconSize/4, 2, 2);
         g2d.drawLine(iconX + iconSize/2, iconY + iconSize/2, 
-                     iconX + iconSize, iconY + iconSize);
+                    iconX + iconSize, iconY + iconSize);
         
         // Texto
         g2d.setColor(new Color(134, 142, 150));

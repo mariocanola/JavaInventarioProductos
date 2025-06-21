@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -103,9 +104,41 @@ public class InterfazProductos extends JFrame {
 
         for (int i = 0; i < productos.size(); i++) {
             Producto producto = productos.get(i);
-            PanelCardProducto card = new PanelCardProducto(producto, p -> {
-                if (controller != null) controller.mostrarDetalle(p);
-            });
+            PanelCardProducto card = new PanelCardProducto(producto, 
+                p -> {
+                    if (controller != null) controller.mostrarDetalle(p);
+                },
+                p -> {
+                    // Confirmar eliminación
+                    int confirm = JOptionPane.showConfirmDialog(
+                        this,
+                        "¿Está seguro de que desea eliminar el producto " + p.darNombreProducto() + "?",
+                        "Confirmar eliminación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                    );
+                    
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        boolean eliminado = controller.eliminarProducto(p.darIdProducto());
+                        if (eliminado) {
+                            JOptionPane.showMessageDialog(
+                                this,
+                                "Producto eliminado exitosamente",
+                                "Éxito",
+                                JOptionPane.INFORMATION_MESSAGE
+                            );
+                            // La lista se actualizará automáticamente a través del controlador
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                this,
+                                "Error al eliminar el producto",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                    }
+                }
+            );
 
             gbc.gridx = i % cardsPerRow;
             gbc.gridy = i / cardsPerRow;
@@ -161,11 +194,19 @@ public class InterfazProductos extends JFrame {
         // Botón para limpiar filtros
         JButton btnLimpiarFiltros = new JButton("Limpiar Filtros");
         btnLimpiarFiltros.addActionListener(e -> {
+            // Limpiar las listas de selección
             marcasSeleccionadas.clear();
             sexosSeleccionados.clear();
             categoriasSeleccionadas.clear();
+            
+            // Recargar los productos sin filtros
             if (controller != null) {
                 controller.cargarProductos();
+            }
+            
+            // Volver a cargar los parámetros para actualizar los menús
+            if (controller != null) {
+                controller.cargarParametros();
             }
         });
         panelTop.add(btnLimpiarFiltros);
@@ -339,7 +380,16 @@ public class InterfazProductos extends JFrame {
             if (controller != null) {
                 controller.mostrarDetalle(p);
             }
+        }, p -> {
+            if (controller != null) {
+                // Get the product ID and pass it to the delete method
+                controller.eliminarProducto(p.darIdProducto());
+                // Refresh the product list after deletion
+                List<Producto> productos = obtenerTodosLosProductos();
+                mostrarProductos(productos);
+            }
         });
+
         panelGrid.add(card.getPanel(), 0); // Lo agrega en la primera posición
         panelGrid.revalidate();
         panelGrid.repaint();
