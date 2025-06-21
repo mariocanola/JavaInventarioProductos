@@ -29,7 +29,7 @@ import Model.ConexionDB;
  * @since 1.0
  */
 public class ProductoDAO {
-
+    
     // Método para agregar un producto
     /**
      * Inserta un nuevo {@link Producto} en la tabla {@code productos}.
@@ -105,8 +105,8 @@ public class ProductoDAO {
         String query = "SELECT * FROM productos";
 
         try (Connection conn = ConexionDB.obtenerConexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query)) {
             
             while (rs.next()) {
                 Producto producto = new Producto(
@@ -140,7 +140,7 @@ public class ProductoDAO {
         String query = "SELECT * FROM productos WHERE id_marca = ?";
 
         try (Connection conn = ConexionDB.obtenerConexion();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+            PreparedStatement stmt = conn.prepareStatement(query)) {
             
             stmt.setInt(1, idMarca);
             ResultSet rs = stmt.executeQuery();
@@ -175,7 +175,7 @@ public class ProductoDAO {
     public Parametro obtenerParametroPorId(int id) {
         String query = "SELECT id, nombre FROM parametro WHERE id = ?";
         try (Connection conn = ConexionDB.obtenerConexion();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+            PreparedStatement stmt = conn.prepareStatement(query)) {
             
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -191,6 +191,28 @@ public class ProductoDAO {
         }
         return null; // Retorna null si no se encuentra o hay un error
     }
-
     
+    /**
+     * Elimina un producto de la base de datos por su ID.
+     *
+     * @param idProducto el ID del producto a eliminar
+     * @return true si el producto fue eliminado exitosamente, false en caso contrario
+     */
+    public boolean eliminarProducto(int idProducto) {
+        String query = "DELETE FROM productos WHERE id = ?";
+        
+        try (Connection conn = ConexionDB.obtenerConexion();
+            PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setInt(1, idProducto);
+            int filasAfectadas = stmt.executeUpdate();
+            
+            // Retorna true si se eliminó exactamente un registro
+            return filasAfectadas > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

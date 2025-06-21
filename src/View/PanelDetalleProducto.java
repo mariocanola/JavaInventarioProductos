@@ -1,12 +1,17 @@
 package View;
 
 import Model.Producto;
+import controller.ControllerProducto;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
 public class PanelDetalleProducto extends JDialog {
+
+    @SuppressWarnings("unused")
+    private final ControllerProducto controller;
+    private final Producto producto;
 
     // Colores personalizados
     private static final Color PRIMARY_COLOR = new Color(51, 122, 183);
@@ -18,8 +23,10 @@ public class PanelDetalleProducto extends JDialog {
     private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 12);
     private static final Font VALUE_FONT = new Font("Segoe UI", Font.PLAIN, 12);
 
-    public PanelDetalleProducto(JFrame owner, Producto producto, String nombreMarca, String nombreCategoria, String nombreSexo) {
+    public PanelDetalleProducto(JFrame owner, Producto producto, String nombreMarca, String nombreCategoria, String nombreSexo, ControllerProducto controller) {
         super(owner, "Detalle del Producto", true);
+        this.controller = controller;
+        this.producto = producto;
         
         // Configuración principal del diálogo
         setLayout(new BorderLayout(10, 10));
@@ -52,10 +59,10 @@ public class PanelDetalleProducto extends JDialog {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
         // Agregar campos de información
-        addStyledDetailField(infoPanel, gbc, "Nombre:", producto.darNombreProducto(), 0);
-        addStyledDetailField(infoPanel, gbc, "Precio:", "$" + String.format("%.2f", producto.darPrecio()), 1);
-        addStyledDetailField(infoPanel, gbc, "Cantidad:", String.valueOf(producto.darCantidad()), 2);
-        addStyledDetailField(infoPanel, gbc, "Estado:", producto.darStatus(), 3);
+        addStyledDetailField(infoPanel, gbc, "Nombre:", this.producto.darNombreProducto(), 0);
+        addStyledDetailField(infoPanel, gbc, "Precio:", "$" + String.format("%.2f", this.producto.darPrecio()), 1);
+        addStyledDetailField(infoPanel, gbc, "Cantidad:", String.valueOf(this.producto.darCantidad()), 2);
+        addStyledDetailField(infoPanel, gbc, "Estado:", this.producto.darStatus(), 3);
         addStyledDetailField(infoPanel, gbc, "Marca:", nombreMarca, 4);
         addStyledDetailField(infoPanel, gbc, "Categoría:", nombreCategoria, 5);
         addStyledDetailField(infoPanel, gbc, "Sexo:", nombreSexo, 6);
@@ -66,7 +73,7 @@ public class PanelDetalleProducto extends JDialog {
         imagePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         ImageIcon icon = null;
-        String imagePath = producto.darImagenPath();
+        String imagePath = this.producto.darImagenPath();
         if (imagePath != null && !imagePath.isEmpty()) {
             icon = new ImageIcon(imagePath);
             // Escalar la imagen manteniendo la relación de aspecto
@@ -126,8 +133,14 @@ public class PanelDetalleProducto extends JDialog {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
                 
-            if (confirm == JOptionPane.YES_OPTION) {
-                JOptionPane.showMessageDialog(this, "Funcionalidad de eliminación en desarrollo", "En desarrollo", JOptionPane.INFORMATION_MESSAGE);
+            if (confirm == JOptionPane.YES_OPTION && controller != null) {
+                boolean eliminado = controller.eliminarProducto(this.producto.darIdProducto());
+                if (eliminado) {
+                    JOptionPane.showMessageDialog(this, "Producto eliminado exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    dispose(); // Cerrar la ventana de detalles
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al eliminar el producto", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         
@@ -152,8 +165,7 @@ public class PanelDetalleProducto extends JDialog {
         setMinimumSize(new Dimension(800, 500));
     }
 
-    private void addStyledDetailField(JPanel panel, GridBagConstraints gbc, 
-                                     String label, String value, int row) {
+    private void addStyledDetailField(JPanel panel, GridBagConstraints gbc, String label, String value, int row) {
         // Etiqueta
         gbc.gridx = 0;
         gbc.gridy = row;

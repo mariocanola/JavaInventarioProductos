@@ -72,10 +72,25 @@ public class ControllerProducto {
      * Consulta los productos en BD y se los pasa a la vista para que los muestre.
      */
     public void cargarProductos() {
-        List<Producto> productos = obtenerTodosLosProductos();
-        // Ordenar por ID descendente (el más reciente primero)
+        List<Producto> productos = productoDAO.obtenerTodos();
+        // Ordenar productos por ID de forma descendente
         productos.sort(Comparator.comparingInt(Producto::darIdProducto).reversed());
         panelPrincipalInterfazProductos.mostrarProductos(productos);
+    }
+    
+    /**
+     * Elimina un producto de la base de datos y actualiza la vista.
+     *
+     * @param idProducto ID del producto a eliminar
+     * @return true si el producto fue eliminado exitosamente, false en caso contrario
+     */
+    public boolean eliminarProducto(int idProducto) {
+        boolean exito = productoDAO.eliminarProducto(idProducto);
+        if (exito) {
+            // Actualizar la vista después de eliminar
+            cargarProductos();
+        }
+        return exito;
     }
     
     /**
@@ -96,7 +111,11 @@ public class ControllerProducto {
         productos.sort(Comparator.comparingInt(Producto::darIdProducto).reversed());
         panelPrincipalInterfazProductos.mostrarProductos(productos);
     }
-
+    
+    /**
+     * Muestra el diálogo de detalle para un producto
+     * @param producto El producto a mostrar en el diálogo de detalle
+     */
     public void mostrarDetalle(Producto producto) {
         // Usar el DAO para obtener los nombres de los parámetros
         Parametro marca = productoDAO.obtenerParametroPorId(producto.darIdMarca());
@@ -109,7 +128,8 @@ public class ControllerProducto {
             producto,
             marca != null ? marca.darNombre() : "N/A",
             categoria != null ? categoria.darNombre() : "N/A",
-            sexo != null ? sexo.darNombre() : "N/A"
+            sexo != null ? sexo.darNombre() : "N/A",
+            this
         );
         detalleDialog.setVisible(true);
     }
