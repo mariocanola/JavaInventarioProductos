@@ -94,6 +94,21 @@ public class ControllerProducto {
     }
     
     /**
+     * Actualiza un producto existente en la base de datos.
+     *
+     * @param producto el producto con los datos actualizados
+     * @return true si la actualización fue exitosa, false en caso contrario
+     */
+    public boolean actualizarProducto(Producto producto) {
+        boolean exito = productoDAO.actualizarProducto(producto);
+        if (exito) {
+            // Actualizar la vista después de actualizar
+            cargarProductos();
+        }
+        return exito;
+    }
+    
+    /**
      * Obtiene todos los productos disponibles en el sistema.
      * @return Lista de todos los productos.
      */
@@ -139,74 +154,75 @@ public class ControllerProducto {
      * imagen y, si todo es correcto, persiste el nuevo producto.
      */
     public void agregarProducto() {
-        // Validaciones básicas
-        String nombre = panelAgregarProducto.getNombre().trim();
-        double precio = panelAgregarProducto.getPrecio();
-        int cantidad = panelAgregarProducto.getCantidad();
-        Parametro idMarca = panelAgregarProducto.getMarcaSeleccionada();
-        Parametro idSexo = panelAgregarProducto.getSexoSeleccionado();
-        Parametro idCategoria = panelAgregarProducto.getCategoriaSeleccionada();
-        String rutaImagenIngresada = panelAgregarProducto.getImagenPath().trim();
+        try {
+            // Obtener y validar los datos del formulario
+            String nombre = panelAgregarProducto.getNombre(); // Ya valida que no esté vacío
+            double precio = panelAgregarProducto.getPrecio(); // Ya valida que sea > 0
+            int cantidad = panelAgregarProducto.getCantidad(); // Ya valida que sea >= 0
+            Parametro marca = panelAgregarProducto.getMarcaSeleccionada(); // Ya valida que no sea null
+            Parametro sexo = panelAgregarProducto.getSexoSeleccionado(); // Ya valida que no sea null
+            Parametro categoria = panelAgregarProducto.getCategoriaSeleccionada(); // Ya valida que no sea null
+            String rutaImagenIngresada = panelAgregarProducto.getImagenPath().trim();
 
-        if (nombre.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(null, "El nombre no puede estar vacío", "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (precio <= 0) {
-            javax.swing.JOptionPane.showMessageDialog(null, "El precio debe ser mayor que cero", "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (cantidad < 0) {
-            javax.swing.JOptionPane.showMessageDialog(null, "La cantidad no puede ser negativa", "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (idMarca == null || idSexo == null || idCategoria == null) {
-            javax.swing.JOptionPane.showMessageDialog(null, "Debe seleccionar marca, sexo y categoría", "Validación", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-	        // Nota: evitamos volver a obtenerlos
+            // Procesar imagen: copiar al directorio "imagenes" si viene de fuera
+            String imagenPathRel = null;
+            if (!rutaImagenIngresada.isEmpty()) {
+                File projectDir = new File(System.getProperty("user.dir"));
+                File imagesDir = new File(projectDir, "imagenes");
+                if (!imagesDir.exists()) imagesDir.mkdirs();
 
-	        // Procesar imagen: copiar al directorio "imagenes" si viene de fuera
-        String imagenPathRel = null;
-        if (!rutaImagenIngresada.isEmpty()) {
-            File projectDir = new File(System.getProperty("user.dir"));
-            File imagesDir = new File(projectDir, "imagenes");
-            if (!imagesDir.exists()) imagesDir.mkdirs();
-
-            File origen = new File(rutaImagenIngresada);
-            // si ya es relativo al proyecto
-            if (!origen.isAbsolute()) {
-                origen = new File(projectDir, rutaImagenIngresada);
-            }
-            if (origen.exists()) {
-                File destino = new File(imagesDir, origen.getName());
-                try {
-                    if (!destino.equals(origen)) {
-                        Files.copy(origen.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                File origen = new File(rutaImagenIngresada);
+                // si ya es relativo al proyecto
+                if (!origen.isAbsolute()) {
+                    origen = new File(projectDir, rutaImagenIngresada);
+                }
+                if (origen.exists()) {
+                    File destino = new File(imagesDir, origen.getName());
+                    try {
+                        if (!destino.equals(origen)) {
+                            Files.copy(origen.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        }
+                        imagenPathRel = "imagenes/" + destino.getName();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        javax.swing.JOptionPane.showMessageDialog(null, "No se pudo copiar la imagen: " + ex.getMessage());
                     }
-                    imagenPathRel = "imagenes/" + destino.getName();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    javax.swing.JOptionPane.showMessageDialog(null, "No se pudo copiar la imagen: " + ex.getMessage());
                 }
             }
+
+            // Crear el objeto Producto con ruta de imagen
+            Producto producto = new Producto(0, nombre, cantidad, precio, "Disponible", 
+                marca.darId(), categoria.darId(), sexo.darId(), imagenPathRel);
+        
+            // Llamar al DAO para agregar el producto
+            boolean exito = productoDAO.agregarProducto(producto);
+
+            if (exito) {
+                javax.swing.JOptionPane.showMessageDialog(null, "Producto agregado exitosamente", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                panelAgregarProducto.setVisible(false);
+                panelAgregarProducto.limpiarCampos();
+
+                // Agregar el producto recién creado al principio de la interfaz
+                panelPrincipalInterfazProductos.agregarProductoAlInicio(producto);
+                
+                // Recargar la lista de productos
+                cargarProductos();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(null, "Error al agregar el producto", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(panelAgregarProducto, 
+                "Error en formato numérico: " + e.getMessage(), 
+                "Error de validación", javax.swing.JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException e) {
+            javax.swing.JOptionPane.showMessageDialog(panelAgregarProducto, 
+                e.getMessage(), 
+                "Error de validación", javax.swing.JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(panelAgregarProducto, 
+                "Error inesperado: " + e.getMessage(), 
+                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
-
-        // Crear el objeto Producto con ruta de imagen
-        Producto producto = new Producto(0, nombre, cantidad, precio, "Disponible", idMarca.darId(), idCategoria.darId(), idSexo.darId(), imagenPathRel);
-	
-	        // Llamar al DAO para agregar el producto
-	        boolean exito = productoDAO.agregarProducto(producto);
-
-	        if (exito) {
-	            javax.swing.JOptionPane.showMessageDialog(null, "Producto agregado exitosamente", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-	            panelAgregarProducto.setVisible(false);
-	            panelAgregarProducto.limpiarCampos();
-
-	            // Agregar el producto recién creado al principio de la interfaz
-	            panelPrincipalInterfazProductos.agregarProductoAlInicio(producto);
-	        } else {
-	            javax.swing.JOptionPane.showMessageDialog(null, "Error al agregar el producto", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-	        }
-	    }
+    }
 }

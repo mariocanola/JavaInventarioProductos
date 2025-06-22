@@ -37,10 +37,48 @@ public class ProductoDAO {
      * @param producto instancia a persistir. Debe contener todos los campos requeridos.
      * @return {@code true} si la operación afectó al menos una fila; {@code false} en caso contrario.
      */
+    /**
+     * Actualiza un producto existente en la base de datos.
+     *
+     * @param producto el producto con los datos actualizados
+     * @return true si la actualización fue exitosa, false en caso contrario
+     */
+    public boolean actualizarProducto(Producto producto) {
+        String query = "UPDATE productos SET nombre = ?, precio = ?, cantidad = ?, status = ?, "
+                + "id_marca = ?, id_categoria = ?, id_sexo = ?, ruta_img = ? WHERE id = ?";
+        
+        try (Connection conn = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setString(1, producto.darNombreProducto());
+            stmt.setDouble(2, producto.darPrecio());
+            stmt.setInt(3, producto.darCantidad());
+            stmt.setString(4, producto.darStatus());
+            stmt.setInt(5, producto.darIdMarca());
+            stmt.setInt(6, producto.darIdCategoria());
+            stmt.setInt(7, producto.darIdSexo());
+            stmt.setString(8, producto.darImagenPath());
+            stmt.setInt(9, producto.darIdProducto());
+            
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Agrega un nuevo producto a la base de datos.
+     *
+     * @param producto el producto a agregar
+     * @return true si la inserción fue exitosa, false en caso contrario
+     */
     public boolean agregarProducto(Producto producto) {
         String query = "INSERT INTO productos (nombre, precio, cantidad, status, id_marca, id_categoria, id_sexo, ruta_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.obtenerConexion(); 
-            PreparedStatement stmt = conn.prepareStatement(query)) {
+            PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             
             // Asignar los valores del objeto Producto al PreparedStatement
             stmt.setString(1, producto.darNombreProducto());
@@ -55,8 +93,16 @@ public class ProductoDAO {
             // Ejecutar la inserción
             int rowsInserted = stmt.executeUpdate();
             
-            // Si se insertaron filas, significa que el producto fue agregado exitosamente
-            return rowsInserted > 0;
+            if (rowsInserted > 0) {
+                // Obtener el ID generado
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        producto.setIdProducto(generatedKeys.getInt(1));
+                        return true;
+                    }
+                }
+            }
+            return false;
             
         } catch (SQLException e) {
             e.printStackTrace();

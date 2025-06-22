@@ -235,23 +235,74 @@ public class PanelAgregarProducto extends JDialog {
         categorias.forEach(comboCategoria::addItem);
     }
 
-    public String getNombre() { return txtNombre.getText(); }
+    public String getNombre() { 
+        String nombre = txtNombre.getText().trim();
+        if (nombre == null || nombre.isEmpty()) {
+            throw new IllegalArgumentException("El campo 'Nombre' es obligatorio");
+        }
+        // Validar que solo contenga letras, números y espacios
+        if (!nombre.matches("^[a-zA-Z0-9áéíóúÁÉÍÓÚüÜñÑ\\s]+")) {
+            throw new IllegalArgumentException("El nombre solo puede contener letras, números y espacios");
+        }
+        return nombre;
+    }
     
-    public double getPrecio() {
-        try { return Double.parseDouble(txtPrecio.getText()); } 
-        catch (NumberFormatException e) { return 0; }
+    public double getPrecio() throws NumberFormatException {
+        String precioText = txtPrecio.getText().trim().replace(",", ".");
+        try {
+            double precio = Double.parseDouble(precioText);
+            if (precio <= 0) {
+                throw new NumberFormatException("El precio debe ser un número mayor que cero");
+            }
+            return precio;
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("El precio debe ser un número decimal");
+        }
     }
 
     public String getImagenPath() { return txtImagen.getText(); }
 
-    public int getCantidad() {
-        try { return Integer.parseInt(txtCantidad.getText()); } 
-        catch (NumberFormatException e) { return 0; }
+    public int getCantidad() throws NumberFormatException {
+        String cantidadText = txtCantidad.getText().trim();
+        try {
+            // Verificar si contiene punto o coma (números decimales)
+            if (cantidadText.contains(".") || cantidadText.contains(",")) {
+                throw new NumberFormatException("La cantidad debe ser un número entero (sin decimales)");
+            }
+            int cantidad = Integer.parseInt(cantidadText);
+            if (cantidad < 0) {
+                throw new NumberFormatException("La cantidad no puede ser negativa");
+            }
+            return cantidad;
+        } catch (NumberFormatException e) {
+            if (e.getMessage().startsWith("La cantidad")) {
+                throw e; // Ya tiene un mensaje personalizado
+            }
+            throw new NumberFormatException("La cantidad debe ser un número entero (ejemplo: 5)");
+        }
     }
 
-    public Parametro getMarcaSeleccionada() { return (Parametro) comboMarca.getSelectedItem(); }
-    public Parametro getSexoSeleccionado() { return (Parametro) comboSexo.getSelectedItem(); }
-    public Parametro getCategoriaSeleccionada() { return (Parametro) comboCategoria.getSelectedItem(); }
+    public Parametro getMarcaSeleccionada() { 
+        Parametro marca = (Parametro) comboMarca.getSelectedItem();
+        if (marca == null) {
+            throw new IllegalArgumentException("Por favor seleccione una marca");
+        }
+        return marca;
+    }
+    public Parametro getSexoSeleccionado() { 
+        Parametro sexo = (Parametro) comboSexo.getSelectedItem();
+        if (sexo == null) {
+            throw new IllegalArgumentException("Por favor seleccione un género");
+        }
+        return sexo;
+    }
+    public Parametro getCategoriaSeleccionada() { 
+        Parametro categoria = (Parametro) comboCategoria.getSelectedItem();
+        if (categoria == null) {
+            throw new IllegalArgumentException("Por favor seleccione una categoría");
+        }
+        return categoria;
+    }
 
     public void addGuardarListener(ActionListener listener) { btnGuardar.addActionListener(listener); }
     public void addSeleccionarImagenListener(ActionListener listener) { btnSeleccionarImagen.addActionListener(listener); }
