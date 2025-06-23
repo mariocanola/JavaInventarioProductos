@@ -7,6 +7,17 @@ import javax.swing.*;
 import Model.Producto;
 import java.util.function.Consumer;
 
+/**
+ * Representa una tarjeta visual para mostrar un producto en la cuadrícula principal.
+ * <p>
+ * Esta clase crea un componente visual que muestra la información básica de un producto,
+ * incluyendo su imagen, nombre, precio y estado. También maneja interacciones como
+ * clics y menús contextuales para acciones adicionales.
+ * </p>
+ *
+ * @author Mario Alexander Cañola
+ * @version 1.0
+ */
 public class PanelCardProducto {
     // Colores personalizados
     private static final Color CARD_BG = new Color(255, 255, 255);
@@ -28,14 +39,34 @@ public class PanelCardProducto {
     
     private final JPanel panel;
 
+    /**
+     * Crea una nueva tarjeta de producto con los manejadores de eventos especificados.
+     *
+     * @param producto El producto a mostrar en la tarjeta
+     * @param onCardClick Manejador de eventos para cuando se hace clic en la tarjeta
+     * @param onDelete Manejador de eventos para cuando se solicita eliminar el producto
+     */
     public PanelCardProducto(Producto producto, Consumer<Producto> onCardClick, Consumer<Producto> onDelete) {
         this.panel = crearTarjetaProducto(producto, onCardClick, onDelete);
     }
 
+    /**
+     * Obtiene el panel que representa la tarjeta del producto.
+     *
+     * @return El panel de la tarjeta del producto
+     */
     public JPanel getPanel() {
         return panel;
     }
 
+    /**
+     * Crea y configura el panel de la tarjeta del producto con todos sus componentes.
+     *
+     * @param producto El producto a mostrar
+     * @param onCardClick Manejador de clics en la tarjeta
+     * @param onDelete Manejador de eliminación del producto
+     * @return El panel de la tarjeta completamente configurado
+     */
     private JPanel crearTarjetaProducto(Producto producto, Consumer<Producto> onCardClick, Consumer<Producto> onDelete) {
         // Crear menú contextual
         JPopupMenu contextMenu = new JPopupMenu();
@@ -175,6 +206,14 @@ public class PanelCardProducto {
         return card;
     }
     
+    /**
+     * Crea un icono de marcador de posición para cuando no hay imagen disponible.
+     *
+     * @param width Ancho del icono
+     * @param height Alto del icono
+     * @param text Texto a mostrar en el icono
+     * @return Un ImageIcon con el marcador de posición generado
+     */
     private ImageIcon createPlaceholderIcon(int width, int height, String text) {
         // Crear una imagen de marcador de posición
         java.awt.image.BufferedImage image = new java.awt.image.BufferedImage(

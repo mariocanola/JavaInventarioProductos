@@ -22,6 +22,14 @@ import Model.Producto;
 import Model.Parametro;
 import controller.ControllerProducto;
 
+/**
+ * Interfaz principal de la aplicación de gestión de inventario de productos.
+ * <p>
+ * Esta clase representa la ventana principal de la aplicación, que muestra una cuadrícula
+ * de productos con opciones para filtrar por marca, categoría y sexo. También permite
+ * agregar nuevos productos y realizar operaciones CRUD sobre los existentes.
+ * </p>
+ */
 public class InterfazProductos extends JFrame {
 
     private JPanel panelGrid;
@@ -43,6 +51,11 @@ public class InterfazProductos extends JFrame {
     private List<String> sexosSeleccionados = new ArrayList<>();
     private List<String> categoriasSeleccionadas = new ArrayList<>();
 
+    /**
+     * Crea una nueva instancia de la interfaz principal de la aplicación.
+     * Inicializa los componentes de la interfaz de usuario y configura
+     * el diseño básico de la ventana.
+     */
     public InterfazProductos() {
         setTitle("Inventario");
         setSize(900, 600);
@@ -85,6 +98,13 @@ public class InterfazProductos extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Muestra la lista de productos en la cuadrícula principal.
+     * Los productos se organizan automáticamente en filas y columnas
+     * según el ancho disponible en la ventana.
+     *
+     * @param productos Lista de productos a mostrar
+     */
     public void mostrarProductos(List<Producto> productos) {
         ultimaListaProductos = productos;
         panelGrid.removeAll();
@@ -156,6 +176,14 @@ public class InterfazProductos extends JFrame {
         panelGrid.repaint();
     }
 
+    /**
+     * Carga los parámetros de filtrado (marcas, sexos, categorias) en la interfaz.
+     * Crea los botones de filtro y configura los menús desplegables correspondientes.
+     *
+     * @param marcas Lista de marcas disponibles para filtrar
+     * @param sexos Lista de sexos disponibles para filtrar
+     * @param categorias Lista de categorías disponibles para filtrar
+     */
     public void cargarParametros(List<Parametro> marcas, List<Parametro> sexos, List<Parametro> categorias) {
 
         this.comboMarca.clear();

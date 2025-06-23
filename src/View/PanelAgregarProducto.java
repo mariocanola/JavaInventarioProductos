@@ -9,6 +9,14 @@ import java.io.File;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.List;
 
+/**
+ * Diálogo para agregar un nuevo producto al inventario.
+ * <p>
+ * Este diálogo proporciona un formulario con campos para ingresar la información
+ * básica de un producto, incluyendo nombre, precio, cantidad, marca, categoría,
+ * sexo y una imagen opcional.
+ * </p>
+ */
 public class PanelAgregarProducto extends JDialog {
     // Colores personalizados
     private static final Color PRIMARY_COLOR = new Color(51, 122, 183);
@@ -27,11 +35,21 @@ public class PanelAgregarProducto extends JDialog {
     private JComboBox<Parametro> comboMarca, comboSexo, comboCategoria;
     private JButton btnGuardar, btnCancelar, btnSeleccionarImagen;
 
+    /**
+     * Crea una nueva instancia del diálogo para agregar producto.
+     *
+     * @param owner El frame padre del diálogo
+     */
     public PanelAgregarProducto(JFrame owner) {
         super(owner, "Agregar Producto", true);
         initUI();
     }
 
+    /**
+     * Inicializa los componentes de la interfaz de usuario.
+     * Configura el diseño, crea y posiciona todos los componentes visuales
+     * necesarios para el formulario de agregar producto.
+     */
     private void initUI() {
         // Configuración principal del diálogo
         setLayout(new BorderLayout(20, 20));
@@ -150,6 +168,15 @@ public class PanelAgregarProducto extends JDialog {
         setLocationRelativeTo(getParent());
     }
     
+    /**
+     * Agrega un campo de formulario con su etiqueta correspondiente al panel especificado.
+     *
+     * @param panel Panel al que se agregará el campo
+     * @param gbc Restricciones de diseño para posicionar el campo
+     * @param label Texto de la etiqueta del campo
+     * @param field Componente del campo de entrada
+     * @param row Fila en la que se ubicará el campo
+     */
     private void addFormField(JPanel panel, GridBagConstraints gbc, String label, Component field, int row) {
         gbc.gridx = 0;
         gbc.gridy = row;
@@ -167,6 +194,12 @@ public class PanelAgregarProducto extends JDialog {
         gbc.gridwidth = 1;
     }
     
+    /**
+     * Aplica un estilo consistente a un campo de texto.
+     *
+     * @param field Campo de texto al que se aplicará el estilo
+     * @return El campo de texto con el estilo aplicado
+     */
     private JTextField createStyledTextField(JTextField field) {
         field.setFont(FIELD_FONT);
         field.setBorder(BorderFactory.createCompoundBorder(
@@ -176,6 +209,12 @@ public class PanelAgregarProducto extends JDialog {
         return field;
     }
     
+    /**
+     * Aplica un estilo consistente a un JComboBox.
+     *
+     * @param combo ComboBox al que se aplicará el estilo
+     * @return El ComboBox con el estilo aplicado
+     */
     private JComboBox<Parametro> createStyledComboBox(JComboBox<Parametro> combo) {
         combo.setFont(FIELD_FONT);
         combo.setBackground(Color.WHITE);
@@ -197,6 +236,13 @@ public class PanelAgregarProducto extends JDialog {
         return combo;
     }
     
+    /**
+     * Crea un botón con un estilo consistente.
+     *
+     * @param text Texto que mostrará el botón
+     * @param bgColor Color de fondo del botón
+     * @return El botón creado con el estilo aplicado
+     */
     private JButton createButton(String text, Color bgColor) {
         JButton button = new JButton(text);
         button.setFont(new Font("Segoe UI", Font.BOLD, 13));

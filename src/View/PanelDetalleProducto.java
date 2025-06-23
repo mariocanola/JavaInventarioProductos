@@ -11,6 +11,14 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 
+/**
+ * Diálogo para visualizar y editar los detalles de un producto existente.
+ * <p>
+ * Este diálogo muestra la información detallada de un producto y permite su edición
+ * o eliminación. Incluye campos para modificar el nombre, precio, cantidad, marca,
+ * categoría y sexo del producto, así como una vista previa de su imagen.
+ * </p>
+ */
 public class PanelDetalleProducto extends JDialog {
     private final ControllerProducto controller;
     private final Producto producto;
@@ -28,6 +36,16 @@ public class PanelDetalleProducto extends JDialog {
     private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 18);
     private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 12);
     
+    /**
+     * Crea una nueva instancia del diálogo de detalles del producto.
+     *
+     * @param owner El frame padre del diálogo
+     * @param producto El producto cuyos detalles se mostrarán
+     * @param nombreMarca Nombre de la marca del producto
+     * @param nombreCategoria Nombre de la categoría del producto
+     * @param nombreSexo Nombre del sexo al que está dirigido el producto
+     * @param controller Controlador que gestiona las operaciones del producto
+     */
     public PanelDetalleProducto(JFrame owner, Producto producto, String nombreMarca, 
             String nombreCategoria, String nombreSexo, ControllerProducto controller) {
         super(owner, "Detalle del Producto", true);
@@ -57,6 +75,10 @@ public class PanelDetalleProducto extends JDialog {
         setMinimumSize(new Dimension(800, 500));
     }
     
+    /**
+     * Configura las propiedades básicas de la ventana del diálogo.
+     * Establece el diseño, el comportamiento de cierre y el color de fondo.
+     */
     private void configurarVentana() {
         setLayout(new BorderLayout(10, 10));
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -64,6 +86,11 @@ public class PanelDetalleProducto extends JDialog {
         getContentPane().setBackground(BACKGROUND_COLOR);
     }
     
+    /**
+     * Crea el panel de encabezado del diálogo.
+     *
+     * @return Panel de encabezado con el título
+     */
     private JPanel crearHeaderPanel() {
         JPanel panel = new JPanel();
         panel.setBackground(PRIMARY_COLOR);
@@ -77,6 +104,14 @@ public class PanelDetalleProducto extends JDialog {
         return panel;
     }
     
+    /**
+     * Crea el panel que contiene los campos de información del producto.
+     *
+     * @param nombreMarca Nombre de la marca del producto
+     * @param nombreCategoria Nombre de la categoría del producto
+     * @param nombreSexo Nombre del sexo al que está dirigido el producto
+     * @return Panel con los campos de información del producto
+     */
     private JPanel crearInfoPanel(String nombreMarca, String nombreCategoria, String nombreSexo) {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
@@ -118,6 +153,12 @@ public class PanelDetalleProducto extends JDialog {
         return panel;
     }
     
+    /**
+     * Crea el panel que contiene los botones de acción.
+     * Incluye botones para editar, actualizar, cancelar, eliminar y cerrar.
+     *
+     * @return Panel con los botones de acción
+     */
     private JPanel crearButtonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         panel.setBackground(BACKGROUND_COLOR);
@@ -159,6 +200,13 @@ public class PanelDetalleProducto extends JDialog {
         return panel;
     }
     
+    /**
+     * Crea el panel principal que contiene tanto la información del producto como su imagen.
+     *
+     * @param infoPanel Panel con la información del producto
+     * @param imagePanel Panel con la imagen del producto
+     * @return Panel principal que contiene ambos paneles
+     */
     private JPanel crearMainContentPanel(JPanel infoPanel, JPanel imagePanel) {
         JPanel mainPanel = new JPanel(new BorderLayout(30, 0));
         mainPanel.setBackground(BACKGROUND_COLOR);
@@ -174,6 +222,10 @@ public class PanelDetalleProducto extends JDialog {
     }
     
     @SuppressWarnings("unchecked")
+    /**
+     * Carga los parámetros necesarios (marcas, categorías, sexos) desde el controlador.
+     * Utiliza reflexión para acceder a los métodos del DAO a través del controlador.
+     */
     private void cargarParametros() {
         // Inicializar listas vacías
         marcas = new ArrayList<>();
