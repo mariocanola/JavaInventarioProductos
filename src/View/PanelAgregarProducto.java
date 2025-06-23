@@ -281,6 +281,12 @@ public class PanelAgregarProducto extends JDialog {
         categorias.forEach(comboCategoria::addItem);
     }
 
+    /**
+     * Obtiene el nombre ingresado en el campo correspondiente.
+     * Valida que no esté vacío y que solo contenga letras, números y espacios.
+     * @return el nombre del producto
+     * @throws IllegalArgumentException si el campo está vacío o contiene caracteres no permitidos
+     */
     public String getNombre() { 
         String nombre = txtNombre.getText().trim();
         if (nombre == null || nombre.isEmpty()) {
@@ -293,6 +299,12 @@ public class PanelAgregarProducto extends JDialog {
         return nombre;
     }
     
+    /**
+     * Obtiene el precio ingresado en el campo correspondiente.
+     * Valida que sea un número decimal mayor que cero.
+     * @return el precio del producto
+     * @throws NumberFormatException si el valor no es un número decimal válido o es menor o igual a cero
+     */
     public double getPrecio() throws NumberFormatException {
         String precioText = txtPrecio.getText().trim().replace(",", ".");
         try {
@@ -306,8 +318,18 @@ public class PanelAgregarProducto extends JDialog {
         }
     }
 
+    /**
+     * Obtiene la ruta de la imagen ingresada en el campo correspondiente.
+     * @return la ruta de la imagen
+     */
     public String getImagenPath() { return txtImagen.getText(); }
 
+    /**
+     * Obtiene la cantidad ingresada en el campo correspondiente.
+     * Valida que sea un número entero no negativo.
+     * @return la cantidad del producto
+     * @throws NumberFormatException si el valor no es un entero válido o es negativo
+     */
     public int getCantidad() throws NumberFormatException {
         String cantidadText = txtCantidad.getText().trim();
         try {
@@ -328,6 +350,11 @@ public class PanelAgregarProducto extends JDialog {
         }
     }
 
+    /**
+     * Obtiene la marca seleccionada en el combo box.
+     * @return la marca seleccionada
+     * @throws IllegalArgumentException si no se ha seleccionado ninguna marca
+     */
     public Parametro getMarcaSeleccionada() { 
         Parametro marca = (Parametro) comboMarca.getSelectedItem();
         if (marca == null) {
@@ -335,6 +362,11 @@ public class PanelAgregarProducto extends JDialog {
         }
         return marca;
     }
+    /**
+     * Obtiene el sexo seleccionado en el combo box.
+     * @return el sexo seleccionado
+     * @throws IllegalArgumentException si no se ha seleccionado ningún género
+     */
     public Parametro getSexoSeleccionado() { 
         Parametro sexo = (Parametro) comboSexo.getSelectedItem();
         if (sexo == null) {
@@ -342,6 +374,11 @@ public class PanelAgregarProducto extends JDialog {
         }
         return sexo;
     }
+    /**
+     * Obtiene la categoría seleccionada en el combo box.
+     * @return la categoría seleccionada
+     * @throws IllegalArgumentException si no se ha seleccionado ninguna categoría
+     */
     public Parametro getCategoriaSeleccionada() { 
         Parametro categoria = (Parametro) comboCategoria.getSelectedItem();
         if (categoria == null) {
@@ -350,9 +387,20 @@ public class PanelAgregarProducto extends JDialog {
         return categoria;
     }
 
+    /**
+     * Agrega un ActionListener al botón Guardar.
+     * @param listener el ActionListener a agregar
+     */
     public void addGuardarListener(ActionListener listener) { btnGuardar.addActionListener(listener); }
+    /**
+     * Agrega un ActionListener al botón Seleccionar Imagen.
+     * @param listener el ActionListener a agregar
+     */
     public void addSeleccionarImagenListener(ActionListener listener) { btnSeleccionarImagen.addActionListener(listener); }
     
+    /**
+     * Limpia todos los campos del formulario y restablece las selecciones.
+     */
     public void limpiarCampos() {
         txtNombre.setText("");
         txtPrecio.setText("");

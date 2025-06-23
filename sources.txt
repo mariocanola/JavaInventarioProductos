@@ -9,3 +9,4 @@ src/Model/Tema.java
 src/Model/ConexionDB.java
 src/Model/Parametro.java
 src/Model/TemaParametro.java
+src/Config/Config.java

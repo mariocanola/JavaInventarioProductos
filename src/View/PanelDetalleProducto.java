@@ -510,6 +510,13 @@ public class PanelDetalleProducto extends JDialog {
         return image;
     }
     
+    /**
+     * Aplica un estilo personalizado a un botón JButton, incluyendo color de fondo, fuente,
+     * borde y efecto hover.
+     *
+     * @param button El botón al que se le aplicará el estilo.
+     * @param color  El color principal de fondo del botón.
+     */
     private void styleButton(JButton button, Color color) {
         button.setFont(new Font("Segoe UI", Font.BOLD, 12));
         button.setForeground(Color.WHITE);
